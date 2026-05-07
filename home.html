@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard -GREENHERB</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/home.js"></script>
+</head>
+<body class="app-layout">
+    <header class="top-navbar">
+        <div class="navbar-brand">
+            <h2>🌱 GREENHERB</h2>
+        </div>
+        
+        <nav class="navbar-nav">
+            <ul>
+                <li><a href="#" class="active">Visão Geral</a></li>
+                <li><a href="#">Lotes de Cultivo</a></li>
+                <li><a href="#">Planos de Cultivo</a></li>
+                <li><a href="#">Tarefas</a></li>
+                <li><a href="#">Alertas</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar-user">
+            <span id="userDisplay">Bem-vindo</span>
+            <button id="logoutBtn" class="btn-outline-small">Sair</button>
+        </div>
+    </header>
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Visão Geral da Estufa</h1>
+            <div class="status-indicator">
+                <span class="status-dot green"></span> Sistema Normal
+            </div>
+        </header>
+
+        <section class="content-area">
+            <div class="cards-grid">
+                <div class="card">
+                    <h3>Lotes Ativos</h3>
+                    <p class="card-value">12</p>
+                </div>
+                <div class="card">
+                    <h3>Alertas Pendentes</h3>
+                    <p class="card-value warning">3</p>
+                </div>
+                <div class="card">
+                    <h3>Tarefas Hoje</h3>
+                    <p class="card-value">8</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <h2>Lotes Recentes</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID do Lote</th>
+                            <th>Erva Aromática</th>
+                            <th>Estado</th>
+                            <th>Plano</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>L-2023-001</td>
+                            <td>Manjericão</td>
+                            <td><span class="badge active">Ativo</span></td>
+                            <td>Regular</td>
+                        </tr>
+                        <tr>
+                            <td>L-2023-002</td>
+                            <td>Hortelã</td>
+                            <td><span class="badge warning">Alerta</span></td>
+                            <td>Emergência</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+</body>
+</html>
