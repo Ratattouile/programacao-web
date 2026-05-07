@@ -1,11 +1,12 @@
 :root {
     --primary-color: #4CB572; 
-    --primary-light: #135E4B;
+    --primary-light: #A1D8B5;
     --bg-color: #135E4B;
     --text-main: #CCDCDB;
     --border-color: #dddddd;
     --warning-color: #ed6c02;
     --danger-color: #d32f2f;
+    --text-hover: #454545
 }
 
 
@@ -27,13 +28,12 @@ button {
     background-color: var(--primary-color);
     color: var(--text-main);
     width: 100%;
-    margin-left: 15px;
-    margin-top: 10px;
-
-   
 }
+
+
 .btn-primary:hover {
     background-color: var(--primary-light);
+    color: var(--text-hover);
 }
 .btn-outline {
     background-color: transparent;
@@ -67,32 +67,33 @@ button {
 }
 
 .login-container {
-    background: #2A3F38; /* Fundo escuro para contrastar com o texto claro */
+    background: #2A3F38; 
     padding: 2.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
 }
 
-.form-group {
-    margin-bottom:1.25rem;
-    margin: 20px;
+.form-group{
+  margin-bottom: 1.5rem;
 }
 
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+   margin-bottom: 0.5rem;
     font-weight: 500;
-    
+    text-align: left;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
     border-radius: 4px;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    box-sizing: border-box; 
+    
 }
 
 /* --- DASHBOARD TOP NAVBAR LAYOUT --- */
@@ -178,7 +179,7 @@ button {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Apenas o conteúdo faz scroll, a navbar fica fixa */
+    overflow-y: auto;
     background-color: var(--bg-color);
 }
 
@@ -210,7 +211,7 @@ button {
 }
 
 .card {
-    background: var(--primary-color);
+    background: #2A3F38;
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -244,7 +245,40 @@ button {
     font-weight: bold;
     color: white;
 }
-.badge.active { background-color: var(--primary-light); }
+.badge.active { background-color: var(--primary-color); }
 .badge.warning { background-color: var(--warning-color); }
 
+@media screen and (max-width: 900px) {
+    .top-navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem 0; 
+        gap: 1rem;
+    }
+    
+    .navbar-nav {
+        width: 100%;
+        overflow-x: auto; 
+    } 
 
+    .navbar-nav ul {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: nowrap; 
+        justify-content: center; 
+        gap: 1.5rem;
+        padding: 0 1.5rem; 
+        margin: 0;
+    } 
+
+    .navbar-nav a {
+        white-space: nowrap; 
+        padding: 0.5rem 0;
+    } 
+
+    .cards-grid {
+    display: flex;
+    flex-direction: column; 
+    gap: 1.5rem; 
+    }   
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas - GREENHERB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/home.js"></script>
+
+</head>
+<body class="app-layout">
+    
+    <header class="top-navbar">
+        <div class="navbar-brand">
+            <h2>🌱 GREENHERB</h2>
+        </div>
+        
+        <nav class="navbar-nav">
+            <ul>
+                <a href="/views/home.html" class="active">Visão Geral</a></li>
+                <li><a href="/views/lotes.html">Lotes de Cultivo</a></li>
+                <li><a href="/views/plano.html">Planos de Cultivo</a></li>
+                <li><a href="/views/tarefas.html" class="active">Tarefas</a></li>
+                <li><a href="/views/alertas.html">Alertas</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar-user">
+            <span id="userDisplay">Bem-vindo</span>
+            <button id="logoutBtn" class="btn-outline-small">Sair</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Tarefas Operacionais</h1>
+            <a href="#" class="btn-primary" style="padding:10px;text-decoration: none; width: auto; border-radius: 5px;">+ Nova Tarefa</a>
+        </header>
+
+        <section class="content-area">
+            
+            <div class="card mt-2">
+                <h2> Pendentes (Para Hoje)</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Tarefa</th>
+                            <th>Lote Alvo</th>
+                            <th>Prazo Limite</th>
+                            <th>Responsável</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Rega</strong></td>
+                            <td>L-2023-001 (Manjericão)</td>
+                            <td>Hoje, 15:00</td>
+                            <td>Maria Técnico</td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Fertilização</strong></td>
+                            <td>L-2023-002 (Hortelã)</td>
+                            <td style="color: var(--danger-color); font-weight: bold;">Ontem, 18:00 (Atrasada)</td>
+                            <td>Qualquer Técnico</td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Monitorização</strong></td>
+                            <td>L-2023-003 (Alecrim)</td>
+                            <td>Hoje, 19:30</td>
+                            <td>João Administrador</td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2>Últimas Executadas</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Tarefa</th>
+                            <th>Lote Alvo</th>
+                            <th>Data/Hora de Execução</th>
+                            <th>Executado por</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Colheita</strong></td>
+                            <td>L-2023-003 (Alecrim)</td>
+                            <td>07/05/2026, 09:15</td>
+                            <td>Maria Técnico</td>
+                            <td><span class="badge" style="background-color: var(--primary-color);">Concluída</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

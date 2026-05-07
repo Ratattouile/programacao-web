@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotes de Cultivo - GREENHERB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/home.js"></script>
+
+</head>
+<body class="app-layout">
+    
+    <header class="top-navbar">
+        <div class="navbar-brand">
+            <h2>🌱 GREENHERB</h2>
+        </div>
+        
+        <nav class="navbar-nav">
+            <ul>
+                <li><a href="/views/home.html">Visão Geral</a></li>
+                <li><a href="/views/lotes.html" class="active">Lotes de Cultivo</a></li>
+                <li><a href="/views/plano.html">Planos de Cultivo</a></li>
+                <li><a href="/views/tarefas.html">Tarefas</a></li>
+                <li><a href="/views/alertas.html">Alertas</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar-user">
+            <span id="userDisplay">Bem-vindo</span>
+            <button id="logoutBtn" class="btn-outline-small">Sair</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Gestão de Lotes de Cultivo</h1>
+            <button class="btn-primary" style="width: auto; margin: 0;">+ Novo Lote</button>
+        </header>
+
+        <section class="content-area">
+            
+            <div class="cards-grid" style="margin-bottom: 20px;">
+                <div class="card">
+                    <h3>Produtividade Média</h3>
+                    <p class="card-value" style="color: var(--text-main);">92%</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID do Lote</th>
+                            <th>Erva Aromática</th>
+                            <th>Plano Associado</th>
+                            <th>Data Início</th>
+                            <th>Estado</th>
+                            <th>Ações Operacionais</th>
+                        </tr>
+                    </thead>
+                   <tbody>
+                        <tr>
+                            <td>L-2023-001</td>
+                            <td>Manjericão</td>
+                            <td>Plano Regular Inverno</td>
+                            <td>01/05/2026</td>
+                            <td><span class="badge active">Ativo</span></td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Gerir Lote</button>
+                                <button class="btn-outline-small">Dividir</button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>L-2023-002</td>
+                            <td>Hortelã</td>
+                            <td>Plano de Emergência</td>
+                            <td>15/04/2026</td>
+                            <td><span class="badge warning">Comprometido</span></td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Gerir Lote</button>
+                                <button class="btn-outline-small" style="color: var(--danger-color); border-color: var(--danger-color);">Registar Perdas</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>L-2023-003</td>
+                            <td>Alecrim</td>
+                            <td>Plano Pontual</td>
+                            <td>10/02/2026</td>
+                            <td><span class="badge" style="background-color: #666;">Concluído</span></td>
+                            <td>
+                                <button class="btn-outline-small">Ver Relatório</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard -GREENHERB</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script defer src="js/home.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/home.js"></script>
+    <script defer src="/js/db.js"></script>
+
 </head>
 <body class="app-layout">
     <header class="top-navbar">
@@ -15,11 +17,11 @@
         
         <nav class="navbar-nav">
             <ul>
-                <li><a href="#" class="active">Visão Geral</a></li>
-                <li><a href="#">Lotes de Cultivo</a></li>
-                <li><a href="#">Planos de Cultivo</a></li>
-                <li><a href="#">Tarefas</a></li>
-                <li><a href="#">Alertas</a></li>
+                <li><a href="/views/home.html" class="active">Visão Geral</a></li>
+                <li><a href="/views/lotes.html">Lotes de Cultivo</a></li>
+                <li><a href="/views/plano.html">Planos de Cultivo</a></li>
+                <li><a href="/views/tarefas.html">Tarefas</a></li>
+                <li><a href="/views/alertas.html">Alertas</a></li>
             </ul>
         </nav>
 
@@ -63,19 +65,8 @@
                             <th>Plano</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>L-2023-001</td>
-                            <td>Manjericão</td>
-                            <td><span class="badge active">Ativo</span></td>
-                            <td>Regular</td>
-                        </tr>
-                        <tr>
-                            <td>L-2023-002</td>
-                            <td>Hortelã</td>
-                            <td><span class="badge warning">Alerta</span></td>
-                            <td>Emergência</td>
-                        </tr>
+                    <tbody id="tabelaLotes">
+                        
                     </tbody>
                 </table>
             </div>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos de Cultivo - GREENHERB</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/home.js"></script>
+</head>
+<body class="app-layout">
+    
+    <header class="top-navbar">
+        <div class="navbar-brand">
+            <h2>🌱 GREENHERB</h2>
+        </div>
+        
+        <nav class="navbar-nav">
+            <ul>
+                <li><a href="/views/home.html" class="active">Visão Geral</a></li>
+                <li><a href="/views/lotes.html">Lotes de Cultivo</a></li>
+                <li><a href="/views/plano.html" class="active">Planos de Cultivo</a></li>
+                <li><a href="/views/tarefas.html">Tarefas</a></li>
+                <li><a href="/views/alertas.html">Alertas</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar-user">
+            <span id="userDisplay">Bem-vindo</span>
+            <button id="logoutBtn" class="btn-outline-small">Sair</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Planos de Cultivo</h1>
+            <a href="#" class="btn-primary" style="padding:10px;text-decoration: none; width: auto; border-radius: 5px;">+ Novo Plano</a>
+        </header>
+
+        <section class="content-area">
+            
+            <div class="cards-grid" style="margin-bottom: 20px;">
+                <div class="card">
+                    <h3>Planos Regulares</h3>
+                    <p class="card-value" style="color: var(--text-main);">4</p>
+                </div>
+                <div class="card">
+                    <h3>Planos de Emergência</h3>
+                    <p class="card-value warning">1</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome do Plano</th>
+                            <th>Erva Aromática</th>
+                            <th>Tipo</th>
+                            <th>Automação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Padrão Inverno</strong></td>
+                            <td>Manjericão</td>
+                            <td><span class="badge" style="background-color: var(--primary-color);">Regular</span></td>
+                            <td><span style="color: var(--primary-color); font-weight: bold;"> Automático</span></td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Editar Regras</button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Tratamento Pragas (Pulgão)</strong></td>
+                            <td>Hortelã</td>
+                            <td><span class="badge warning">Emergência</span></td>
+                            <td><span>Manual</span></td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Editar Regras</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Reforço Nutricional Extra</strong></td>
+                            <td>Alecrim</td>
+                            <td><span class="badge" style="background-color: #0288d1;">Pontual</span></td>
+                            <td><span>Manual</span></td>
+                            <td>
+                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Editar Regras</button>
+                                <button class="btn-outline-small" style="margin-left: 5px;">Autorizar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
