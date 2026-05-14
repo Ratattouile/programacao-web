@@ -14,6 +14,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 
@@ -151,6 +152,17 @@ button {
     border-bottom: 3px solid var(--primary-color);
 }
 
+
+.navbar-nav a {
+    border-radius: 6px;
+    border-bottom: none; /* remove o underline */
+    padding: 6px 12px;
+}
+.navbar-nav a:hover, .navbar-nav a.active {
+    background: rgba(76, 181, 114, 0.12);
+    border-bottom: none;
+}
+
 .navbar-user {
     display: flex;
     align-items: center;
@@ -172,6 +184,7 @@ button {
 
 .btn-outline-small:hover {
     background-color: var(--danger-color);
+    color: white;
 }
 
 /* Main Content */
@@ -213,10 +226,12 @@ button {
 .card {
     background: #2A3F38;
     padding: 1.5rem;
-    border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     margin-bottom: 20px;
+    border: 1px solid #3a5550;
+    border-radius: 10px;
 }
+
 
 .card-value {
     font-size: 2rem;
@@ -282,3 +297,47 @@ button {
     gap: 1.5rem; 
     }   
 }
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.logout-btn {
+    position: relative;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+}
+.logout-btn:hover {
+    background: rgba(211, 47, 47, 0.15);
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+.logout-btn .tooltip {
+    position: absolute;
+    bottom: -28px;
+    right: 0;
+    background: #1a2e2a;
+    color: var(--text-main);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border: 1px solid var(--border-color);
+}
+.logout-btn:hover .tooltip { opacity: 1; }
