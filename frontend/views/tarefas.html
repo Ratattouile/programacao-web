@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarefas - GREENHERB</title>
     <link rel="stylesheet" href="/frontend/css/style.css">
     <script defer src="/frontend/js/home.js"></script>
-        <link rel="stylesheet"
+    <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
 </head>
+
 <body class="app-layout">
-    
+
     <header class="top-navbar">
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
-        
+
         <nav class="navbar-nav">
             <ul>
                 <a href="/frontend/views/home.html">Visão Geral</a></li>
@@ -43,13 +45,15 @@
     <main class="main-content">
         <header class="topbar">
             <h1>Tarefas Operacionais</h1>
-            <a href="#" class="btn-primary" style="padding:10px;text-decoration: none; width: auto; border-radius: 5px;">+ Nova Tarefa</a>
+            <a href="#" class="btn-primary"
+                style="padding:10px;text-decoration: none; width: auto; border-radius: 5px;">+ Nova Tarefa</a>
         </header>
 
         <section class="content-area">
-            
-            <div class="card mt-2">
-                <h2> Pendentes (Para Hoje)</h2>
+            <div class="card mt-2" style="margin-bottom: 1rem;">
+                <div class="section-title-row">
+                    <h2>Pendentes (Para Hoje)</h2>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -62,40 +66,34 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Rega</strong></td>
-                            <td>L-2023-001 (Manjericão)</td>
+                            <td>Rega</td>
+                            <td class="lot-id">L-2023-001 (Manjericão)</td>
                             <td>Hoje, 15:00</td>
                             <td>Maria Técnico</td>
-                            <td>
-                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
-                            </td>
+                            <td><button class="btn-action green">Executar</button></td>
                         </tr>
-                        
                         <tr>
-                            <td><strong>Fertilização</strong></td>
-                            <td>L-2023-002 (Hortelã)</td>
-                            <td style="color: var(--danger-color); font-weight: bold;">Ontem, 18:00 (Atrasada)</td>
+                            <td>Fertilização</td>
+                            <td class="lot-id">L-2023-002 (Hortelã)</td>
+                            <td><span class="late">Ontem, 18:00 — Atrasada</span></td>
                             <td>Qualquer Técnico</td>
-                            <td>
-                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
-                            </td>
+                            <td><button class="btn-action green">Executar</button></td>
                         </tr>
-
                         <tr>
-                            <td><strong>Monitorização</strong></td>
-                            <td>L-2023-003 (Alecrim)</td>
+                            <td>Monitorização</td>
+                            <td class="lot-id">L-2023-003 (Alecrim)</td>
                             <td>Hoje, 19:30</td>
                             <td>João Administrador</td>
-                            <td>
-                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Executar</button>
-                            </td>
+                            <td><button class="btn-action green">Executar</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="card" style="margin-top: 2rem;">
-                <h2>Últimas Executadas</h2>
+            <div class="card">
+                <div class="section-title-row">
+                    <h2>Últimas Executadas</h2>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -108,11 +106,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Colheita</strong></td>
-                            <td>L-2023-003 (Alecrim)</td>
+                            <td>Colheita</td>
+                            <td class="lot-id">L-2023-003 (Alecrim)</td>
                             <td>07/05/2026, 09:15</td>
                             <td>Maria Técnico</td>
-                            <td><span class="badge" style="background-color: var(--primary-color);">Concluída</span></td>
+                            <td><span class="badge concluded">Concluída</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -121,4 +119,5 @@
     </main>
 
 </body>
+
 </html>

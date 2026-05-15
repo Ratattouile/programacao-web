@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotes de Cultivo - GREENHERB</title>
     <link rel="stylesheet" href="/frontend/css/style.css">
     <script defer src="/frontend/js/home.js"></script>
-        <link rel="stylesheet"
+    <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
 </head>
+
 <body class="app-layout">
-    
+
     <header class="top-navbar">
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
-        
+
         <nav class="navbar-nav">
             <ul>
                 <li><a href="/frontend/views/home.html">Visão Geral</a></li>
@@ -47,15 +49,17 @@
         </header>
 
         <section class="content-area">
-            
-            <div class="cards-grid" style="margin-bottom: 20px;">
-                <div class="card">
+            <div class="cards-grid" style="margin-bottom: 1rem;">
+                <div class="metric-card default">
                     <h3>Produtividade Média</h3>
-                    <p class="card-value" style="color: var(--text-main);">92%</p>
+                    <p class="card-value">92%</p>
                 </div>
             </div>
 
             <div class="card mt-2">
+                <div class="section-title-row">
+                    <h2>Todos os Lotes</h2>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -64,42 +68,46 @@
                             <th>Plano Associado</th>
                             <th>Data Início</th>
                             <th>Estado</th>
-                            <th>Ações Operacionais</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
-                   <tbody>
+                    <tbody>
                         <tr>
-                            <td>L-2023-001</td>
+                            <td class="lot-id">L-2023-001</td>
                             <td>Manjericão</td>
                             <td>Plano Regular Inverno</td>
                             <td>01/05/2026</td>
                             <td><span class="badge active">Ativo</span></td>
                             <td>
-                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Gerir Lote</button>
-                                <button class="btn-outline-small">Dividir</button>
+                                <div class="actions-group">
+                                    <button class="btn-action green">Gerir Lote</button>
+                                    <button class="btn-action ghost">Dividir</button>
+                                </div>
                             </td>
                         </tr>
-                        
                         <tr>
-                            <td>L-2023-002</td>
+                            <td class="lot-id">L-2023-002</td>
                             <td>Hortelã</td>
                             <td>Plano de Emergência</td>
                             <td>15/04/2026</td>
                             <td><span class="badge warning">Comprometido</span></td>
                             <td>
-                                <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem; margin: 0;">Gerir Lote</button>
-                                <button class="btn-outline-small" style="color: var(--danger-color); border-color: var(--danger-color);">Registar Perdas</button>
+                                <div class="actions-group">
+                                    <button class="btn-action green">Gerir Lote</button>
+                                    <button class="btn-action red">Registar Perdas</button>
+                                </div>
                             </td>
                         </tr>
-
                         <tr>
-                            <td>L-2023-003</td>
+                            <td class="lot-id">L-2023-003</td>
                             <td>Alecrim</td>
                             <td>Plano Pontual</td>
                             <td>10/02/2026</td>
-                            <td><span class="badge" style="background-color: #666;">Concluído</span></td>
+                            <td><span class="badge concluded">Concluído</span></td>
                             <td>
-                                <button class="btn-outline-small">Ver Relatório</button>
+                                <div class="actions-group">
+                                    <button class="btn-action ghost">Ver Relatório</button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -109,4 +117,5 @@
     </main>
 
 </body>
+
 </html>

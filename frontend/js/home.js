@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lotes.forEach(lote => {
                 let corBadge = 'active';
                 if (lote.estado === 'Comprometido') corBadge = 'warning';
-                if (lote.estado === 'Concluido') corBadge = 'concluded';
+                if (lote.estado === 'Concluído') corBadge = 'concluded';
 
                 let corPlano = '';
                 if (lote.plano === 'Emergência') corPlano = 'emergency';
