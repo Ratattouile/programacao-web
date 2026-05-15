@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 
         alert('Conta criada com sucesso!')
 
-        window.location.href = '/views/login.html'
+        window.location.href = '/frontend/views/login.html'
 
 
 

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             sessionStorage.setItem('utilizadorAcesso', JSON.stringify(guardarUtilizador))
-            window.location.href = '/views/home.html'
+            window.location.href = '/frontend/views/home.html'
         }else{
             alert('Credenciais Invalidas!');
         }

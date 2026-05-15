@@ -1,58 +1,55 @@
-document.addEventListener('DOMContentLoaded', () =>{
-    const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso')
+document.addEventListener('DOMContentLoaded', () => {
+    const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
 
-    if(!utilizadorAcesso){
-        window.location.href = '/views/login.html'
+    if (!utilizadorAcesso) {
+        window.location.href = '/frontend/views/login.html';
         return;
-
     }
 
     const utilizador = JSON.parse(utilizadorAcesso);
-    const userDisplay = document.getElementById('userDisplay')
+    const userDisplay = document.getElementById('userDisplay');
 
-    if(userDisplay){
-        userDisplay.textContent =`${utilizador.nome}`
+    if (userDisplay) {
+        userDisplay.textContent = `${utilizador.nome}`;
     }
 
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            // Limpa a sessão
             sessionStorage.removeItem('utilizadorAcesso');
-            // Volta para a página inicial
-            window.location.href = '/views/login.html';
+            window.location.href = '/frontend/views/login.html';
         });
     }
 
-
-    async function carregarTabela(){
+    async function carregarTabela() {
         try {
-            const lotes = await getLotes()
-            const tbody = document.getElementById('tabelaLotes')
+            const lotes = await getLotes();
+            const tbody = document.getElementById('tabelaLotes');
 
             tbody.innerHTML = '';
 
             lotes.forEach(lote => {
-                let corBadge = 'active'
-                if(lote.estado === 'Comprometido') corBadge = 'warning';
-                if(lote.estado === 'Concluido') corBadge = 'badge';
-                
-                const tr = document.createElement('tr')
+                let corBadge = 'active';
+                if (lote.estado === 'Comprometido') corBadge = 'warning';
+                if (lote.estado === 'Concluido') corBadge = 'concluded';
+
+                let corPlano = '';
+                if (lote.plano === 'Emergência') corPlano = 'emergency';
+
+                const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${lote.id}</td>
+                    <td class="lot-id">${lote.id}</td>
                     <td>${lote.erva}</td>
-                    <td><span class="badge ${corBadge}">${lote.estado}</td>
-                    <td>${lote.plano}</td>
-                
-                
-                `
-                tbody.appendChild(tr)
-                
+                    <td><span class="badge ${corBadge}">${lote.estado}</span></td>
+                    <td><span class="plan-tag ${corPlano}">${lote.plano}</span></td>
+                `;
+                tbody.appendChild(tr);
             });
+
         } catch (error) {
-            console.error('Erro ao carregar a base de dados', erro)
+            console.error('Erro ao carregar a base de dados', error);
         }
     }
 
     carregarTabela();
-})
+});

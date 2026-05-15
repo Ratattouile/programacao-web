@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alertas - GREENHERB</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <script defer src="/js/home.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout" />
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <script defer src="/frontend/js/home.js"></script>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
 
 </head>
 <body class="app-layout">
@@ -18,15 +19,20 @@
         
         <nav class="navbar-nav">
             <ul>
-                <li><a href="/views/home.html">Visão Geral</a></li>
-                <li><a href="/views/lotes.html">Lotes de Cultivo</a></li>
-                <li><a href="/views/plano.html">Planos de Cultivo</a></li>
-                <li><a href="/views/tarefas.html">Tarefas</a></li>
-                <li><a href="/views/alertas.html" class="active">Alertas</a></li>
+                <li><a href="/frontend/views/home.html">Visão Geral</a></li>
+                <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
+                <li><a href="/frontend/views/plano.html">Planos de Cultivo</a></li>
+                <li><a href="/frontend/views/tarefas.html">Tarefas</a></li>
+                <li><a href="/frontend/views/alertas.html" class="active">Alertas</a></li>
             </ul>
         </nav>
 
         <div class="navbar-user">
+            <button class="alert-btn" aria-label="Alertas">
+                <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
+                <div class="alert-dot"></div>
+            </button>
+            <div class="nav-avatar">JG</div>
             <span id="userDisplay">Bem-vindo</span>
             <button id="logoutBtn" class="logout-btn">
                 <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
