@@ -1,40 +1,36 @@
+const Alerta = require('../models/Alerta');
 
+exports.listarAlertas = async (req, res) => {
+    try {
+        const alertas = await Alerta.find().populate('loteId', 'ervaAromatica');
+        return res.status(200).json({ sucesso: true, dados: alertas });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
 
+exports.resolverAlerta = async (req, res) => {
+    try {
+        const alerta = await Alerta.findByIdAndUpdate(req.params.id, { estado: "Resolvido" }, { new: true });
+        if (!alerta) return res.status(404).json({ sucesso: false, erro: "Alerta não encontrado" });
+        return res.status(200).json({ sucesso: true, mensagem: "Alerta resolvido com sucesso", dados: alerta });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
 
-exports.listarAlertas = (req,res) => {
-    const alertas = [
-        { id: "PLN-001", loteId: "L-001", gravidade: "Informativo", descricao: "tudo a arder", justificacao: "safe", dataCriacao:"2019-08-24T14:15:22Z" }
+exports.ignorarAlerta = async (req, res) => {
+    const { justificacao } = req.body;
 
-    ]
-
-    return res.status(200).json({
-        sucesso:true,
-        dados:alertas
-    })
-}
-
-
-exports.resolverAlerta = (req,res) =>{
-    const idDoAlerta = req.params.id;
-
-    return res.status(200).json({
-        sucesso:true,
-        mensagem:`Alerta ${idDoAlerta} autorizado com sucesso`,
-        dados:{
-            id:idDoAlerta,
-        }
-    })
-}
-
-exports.ignorarAlerta = (req,res) =>{
-    const idDoAlerta = req.params.id;
-
-    return res.status(200).json({
-        sucesso:true,
-        mensagem:`Alerta ${idDoAlerta} autorizado com sucesso`,
-        dados:{
-            id:idDoAlerta,
-            justificacao: "Sensor avariado, leitura falsa."
-        }
-    })
- }
+    try {
+        const alerta = await Alerta.findByIdAndUpdate(
+            req.params.id,
+            { estado: "Ignorado", justificacao: justificacao || '' },
+            { new: true }
+        );
+        if (!alerta) return res.status(404).json({ sucesso: false, erro: "Alerta não encontrado" });
+        return res.status(200).json({ sucesso: true, mensagem: "Alerta ignorado", dados: alerta });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};

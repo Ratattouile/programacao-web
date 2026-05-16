@@ -1,60 +1,36 @@
+const Plano = require('../models/Plano');
 
+exports.listarPlanos = async (req, res) => {
+    try {
+        const planos = await Plano.find();
+        return res.status(200).json({ sucesso: true, dados: planos });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
 
+exports.criarPlanos = async (req, res) => {
+    const { nome, ervaAromatica, tipo, automacao, regrasAutomacao } = req.body;
 
-
-exports.listarPlanos = (req,res) => {
-    const planos = [
-        { id: "PLN-001", nome: "Plano Inverno", ervaAromatica: "Manjericão", tipo: "Regular", estadoAutorizacao: "Aprovado" }
-
-    ]
-
-    return res.status(200).json({
-        sucesso:true,
-        dados:planos
-    })
-}
-
-exports.criarPlanos = (req, res) => {
-    const {nome, ervaAromatica, tipo, automacao, regrasAutomacao} = req.body
-
-    if(!nome || !ervaAromatica || !tipo || !automacao){
-        return res.status(400).json({
-            sucesso:false,
-            erro:"faltam campos obrigatorios",
-        })
+    if (!nome || !ervaAromatica || !tipo || !automacao) {
+        return res.status(400).json({ sucesso: false, erro: "Faltam campos obrigatorios" });
     }
 
-    let estadoAutorizacao = tipo === "Pontual" ? "Pendente" : "Aprovado"
-
-    const novoPlano = {
-        id: "PLN-" + Math.floor(Math.random() * 10000),
-        nome,
-        ervaAromatica,
-        tipo,
-        automacao,
-        regrasAutomacao: regrasAutomacao || "",
-        estadoAutorizacao,
-        dataCriacao: new Date().toISOString()
+    try {
+        const estadoAutorizacao = tipo === "Pontual" ? "Pendente" : "Aprovado";
+        const novoPlano = await Plano.create({ nome, ervaAromatica, tipo, automacao, regrasAutomacao, estadoAutorizacao });
+        return res.status(201).json({ sucesso: true, mensagem: "Plano criado com sucesso", dados: novoPlano });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
     }
+};
 
-    return res.status(201).json({
-        sucesso:true,
-        mensagem:"Plano criado com sucesso",
-        dados:novoPlano
-    })
-
-}
-
-
-exports.autorizarPlano = (req,res) =>{
-    const idDoPlano = req.params.id;
-
-    return res.status(200).json({
-        sucesso:true,
-        mensagem:`Plano ${idDoPlano} autorizado com sucesso`,
-        dados:{
-            id:idDoPlano,
-            estadoAutorizacao:"Aprovado"
-        }
-    })
-}
+exports.autorizarPlano = async (req, res) => {
+    try {
+        const plano = await Plano.findByIdAndUpdate(req.params.id, { estadoAutorizacao: "Aprovado" }, { new: true });
+        if (!plano) return res.status(404).json({ sucesso: false, erro: "Plano não encontrado" });
+        return res.status(200).json({ sucesso: true, mensagem: "Plano autorizado com sucesso", dados: plano });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};

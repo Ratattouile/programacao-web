@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./db');
 
 const app = express()
 
@@ -27,6 +28,8 @@ app.use('/api/alertas', alertasRoutes)
 
 
 
+
+connectDB();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

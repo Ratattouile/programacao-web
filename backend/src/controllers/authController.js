@@ -1,60 +1,46 @@
+const Utilizador = require('../models/Utilizador');
+const bcrypt = require('bcrypt');
 
+exports.register = async (req, res) => {
+    const { nome, username, password, cargo } = req.body;
 
-
-
-
-exports.register = (req,res) => {
-    const {nome,email,password,cargo} = req.body
-
-
-    if(!nome || !email || !password || ! cargo){
-        return res.status(400).json({
-            sucesso: false,
-            erro: "Faltam campos: nome, email, password e cargo (ex: Administrador, Tecnico)."
-        });
+    if (!nome || !username || !password || !cargo) {
+        return res.status(400).json({ sucesso: false, erro: "Faltam campos: nome, username, password e cargo." });
     }
 
-    const novoUtilizador = {
-        id:"USR-" + Math.floor(Math.random() * 10000),
-        nome,
-        email,
-        cargo,
-        dataRegisto:new Date().toISOString()
+    try {
+        const passwordHash = await bcrypt.hash(password, 10);
+        const existente = await Utilizador.findOne({ username });
+        if (existente) return res.status(409).json({ sucesso: false, erro: "Username já registado" });
+
+        const novoUtilizador = await Utilizador.create({ nome, username, password: passwordHash, cargo });
+        return res.status(201).json({ sucesso: true, mensagem: "Conta criada com sucesso!", dados: { id: novoUtilizador._id, nome, cargo } });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
+
+exports.login = async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ sucesso: false, erro: "Username e password são obrigatórios." });
     }
 
-    return res.status(201).json({
-        sucesso: true,
-        mensagem: "Conta criada com sucesso!",
-        dados: novoUtilizador
-    });
+    try {
+        const utilizador = await Utilizador.findOne({ username });
 
-}
+        if (!utilizador) return res.status(401).json({ sucesso: false, erro: "Credenciais inválidas." });
 
-exports.login = (req,res) => {
-    const {email,password} = req.body
+        const passwordCorreta = await bcrypt.compare(password, utilizador.password);
+        if (!passwordCorreta) return res.status(401).json({ sucesso: false, erro: "Credenciais inválidas." });
 
-    if(!email || !password){
-        return res.status(400).json({
-            sucesso: false,
-            erro: "Email e password são obrigatórios."
-        });
-    }
-
-    if(email === "admin@estufa.com" || password === "123"){
         return res.status(200).json({
             sucesso: true,
             mensagem: "Login efetuado com sucesso!",
-            dados: {
-                id: "USR-001",
-                nome: "Administrador Principal",
-                cargo: "Administrador",
-                token: "token_falso_para_ja_123456789" 
-            }
+            dados: { id: utilizador._id, nome: utilizador.nome, cargo: utilizador.cargo }
         });
-    }else{
-        return res.status(401).json({
-            sucesso: false,
-            erro: "Credenciais inválidas. Tenta admin@estufa.pt e 123456."
-        });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
     }
-}
+};

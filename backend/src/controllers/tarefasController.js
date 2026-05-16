@@ -1,64 +1,39 @@
+const Tarefa = require('../models/Tarefa');
 
+exports.listarTarefas = async (req, res) => {
+    try {
+        const tarefas = await Tarefa.find().populate('loteId', 'ervaAromatica');
+        return res.status(200).json({ sucesso: true, dados: tarefas });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
 
+exports.criarTarefas = async (req, res) => {
+    const { tipo, loteId, responsavel, prazoLimite } = req.body;
 
-
-
-
-
-exports.listarTarefas = (req,res) => {
-    const tarefas = [
-        { id: "TAR-001", tipo: "Rega", loteId: "L-001", estado: "Pendente", responsavel: "ola", prazoLimite: "2019-08-24T14:15:22Z", dataExecucao:"2019-08-24T14:15:22Z"}
-
-    ]
-
-    return res.status(200).json({
-        sucesso:true,
-        dados:tarefas
-    })
-}
-
-
-exports.criarTarefas = (req, res) => {
-    const {tipo, loteId, responsavel, prazoLimite} = req.body
-
-    if(!tipo || !loteId || !responsavel || !prazoLimite){
-        return res.status(400).json({
-            sucesso:false,
-            erro:"faltam campos obrigatorios",
-        })
+    if (!tipo || !loteId || !responsavel || !prazoLimite) {
+        return res.status(400).json({ sucesso: false, erro: "Faltam campos obrigatorios" });
     }
 
-    const novaTarefa = {
-        id: "TAR-" + Math.floor(Math.random() * 10000), 
-        tipo,
-        loteId,
-        estado: "Pendente", 
-        responsavel,
-        prazoLimite,
-        dataExecucao: null 
-    };
+    try {
+        const novaTarefa = await Tarefa.create({ tipo, loteId, responsavel, prazoLimite });
+        return res.status(201).json({ sucesso: true, mensagem: "Tarefa criada com sucesso", dados: novaTarefa });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
 
-
-
-    return res.status(201).json({
-        sucesso:true,
-        mensagem:"tarefa criado com sucesso",
-        dados:novaTarefa
-    })
-
-}
-
-
-exports.executarTarefa = (req,res) =>{
-    const idDaTarefa = req.params.id;
-
-    return res.status(200).json({
-        sucesso:true,
-        mensagem:`Plano ${idDaTarefa} autorizado com sucesso`,
-        dados:{
-            id:idDaTarefa,
-        }
-    })
-}
-
-
+exports.executarTarefa = async (req, res) => {
+    try {
+        const tarefa = await Tarefa.findByIdAndUpdate(
+            req.params.id,
+            { estado: "Concluída", dataExecucao: new Date() },
+            { new: true }
+        );
+        if (!tarefa) return res.status(404).json({ sucesso: false, erro: "Tarefa não encontrada" });
+        return res.status(200).json({ sucesso: true, mensagem: "Tarefa executada com sucesso", dados: tarefa });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};

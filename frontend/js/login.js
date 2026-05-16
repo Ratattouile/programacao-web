@@ -1,39 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm')
 
-    if(!loginForm) return
-    
-    loginForm.addEventListener('submit', function(event){
-        event.preventDefault()
+    if (!loginForm) return
 
-        const usernameInput = document.getElementById('username').value
-        const passwordInput = document.getElementById('password').value
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-        let utilizadoresGuardados = localStorage.getItem('greenherb_users')
-        let arrayUtilizadores = []
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-        if(utilizadoresGuardados){
-            arrayUtilizadores = JSON.parse(utilizadoresGuardados)
+        const resposta = await fetch('http://localhost:3000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+            sessionStorage.setItem('utilizadorAcesso', JSON.stringify(dados.dados));
+            window.location.href = '/frontend/views/home.html';
+        } else {
+            alert(dados.erro);
         }
-
-        const utilizadorValido = arrayUtilizadores.find(u => u.username === usernameInput)
-
-        const isContaMestre = (usernameInput === 'admin' && passwordInput === '1234')
-
-        if(utilizadorValido || isContaMestre){
-            const guardarUtilizador = utilizadorValido ? utilizadorValido :{
-                nome: 'João Guerra',
-                perfil: 'Administrador',
-                username: 'admin'
-            }
-
-            sessionStorage.setItem('utilizadorAcesso', JSON.stringify(guardarUtilizador))
-            window.location.href = '/frontend/views/home.html'
-        }else{
-            alert('Credenciais Invalidas!');
-        }
-        
-        
-        
     });
 });
