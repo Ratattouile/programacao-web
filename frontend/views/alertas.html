@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alertas - GREENHERB</title>
     <link rel="stylesheet" href="/frontend/css/style.css">
-    <script defer src="/frontend/js/home.js"></script>
+    <script defer src="/frontend/js/alertas.js"></script>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
 
@@ -52,15 +52,15 @@
             <div class="cards-grid" style="margin-bottom: 1rem;">
                 <div class="metric-card danger">
                     <h3>Críticos</h3>
-                    <p class="card-value">1</p>
+                    <p class="card-value" id="contCriticos">-</p>
                 </div>
                 <div class="metric-card warn">
                     <h3>Avisos</h3>
-                    <p class="card-value">1</p>
+                    <p class="card-value" id="contAvisos">-</p>
                 </div>
                 <div class="metric-card info">
                     <h3>Informativos</h3>
-                    <p class="card-value">1</p>
+                    <p class="card-value" id="contInformativos">-</p>
                 </div>
             </div>
 
@@ -78,7 +78,7 @@
                             <th>Ações de Resolução</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabelaAlertas">
                         <tr>
                             <td>Hoje, 21:05</td>
                             <td class="lot-id">L-2023-002</td>

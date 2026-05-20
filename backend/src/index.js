@@ -3,11 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./db');
 
-const app = express()
+const app = express();
 
 //middleware
-app.use(cors())
-app.use(express.json())
+app.use(cors({ origin: '*' }));
+app.use(express.json());
 
 const planosRoutes = require('./routes/planosRoutes.js');
 const lotesRoutes = require('./routes/lotesRoutes.js')
@@ -15,19 +15,11 @@ const tarefasRoutes = require('./routes/tarefasRoutes.js')
 const alertasRoutes = require('./routes/alertasRoutes.js')
 const authRoutes = require('./routes/authRoutes.js')
 
-
 app.use('/api/auth', authRoutes)
 app.use('/api/planos', planosRoutes)
 app.use('/api/lotes', lotesRoutes)
 app.use('/api/tarefas', tarefasRoutes)
 app.use('/api/alertas', alertasRoutes)
-
-
-
-
-
-
-
 
 connectDB();
 

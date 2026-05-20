@@ -1,17 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const tarefasController = require('../controllers/tarefasController');
+const authMiddleware = require('../middleware/authMiddleware');
 
+router.get('/', authMiddleware, tarefasController.listarTarefas);
 
+router.post('/', authMiddleware, tarefasController.criarTarefas);
 
-
-router.get('/', tarefasController.listarTarefas);
-
-router.post('/', tarefasController.criarTarefas);
-
-
-router.patch('/:id/executar', tarefasController.executarTarefa);
-
+router.patch('/:id/executar', authMiddleware, tarefasController.executarTarefa);
 
 module.exports = router
 

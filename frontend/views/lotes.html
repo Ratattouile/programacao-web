@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotes de Cultivo - GREENHERB</title>
     <link rel="stylesheet" href="/frontend/css/style.css">
-    <script defer src="/frontend/js/home.js"></script>
+    <script defer src="/frontend/js/lotes.js"></script>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
 </head>
@@ -45,7 +45,7 @@
     <main class="main-content">
         <header class="topbar">
             <h1>Gestão de Lotes de Cultivo</h1>
-            <button class="btn-primary" style="width: auto; margin: 0;">+ Novo Lote</button>
+            <button id="btnNovoLote" class="btn-primary" style="width: auto; margin: 0;">+ Novo Lote</button>
         </header>
 
         <section class="content-area">
@@ -71,51 +71,36 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="lot-id">L-2023-001</td>
-                            <td>Manjericão</td>
-                            <td>Plano Regular Inverno</td>
-                            <td>01/05/2026</td>
-                            <td><span class="badge active">Ativo</span></td>
-                            <td>
-                                <div class="actions-group">
-                                    <button class="btn-action green">Gerir Lote</button>
-                                    <button class="btn-action ghost">Dividir</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="lot-id">L-2023-002</td>
-                            <td>Hortelã</td>
-                            <td>Plano de Emergência</td>
-                            <td>15/04/2026</td>
-                            <td><span class="badge warning">Comprometido</span></td>
-                            <td>
-                                <div class="actions-group">
-                                    <button class="btn-action green">Gerir Lote</button>
-                                    <button class="btn-action red">Registar Perdas</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="lot-id">L-2023-003</td>
-                            <td>Alecrim</td>
-                            <td>Plano Pontual</td>
-                            <td>10/02/2026</td>
-                            <td><span class="badge concluded">Concluído</span></td>
-                            <td>
-                                <div class="actions-group">
-                                    <button class="btn-action ghost">Ver Relatório</button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tbody id="tabelaLotes">
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
+    <div id="modalNovoLote" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <h2>Novo Lote</h2>
+            <form id="formNovoLote">
+                <div class="form-group">
+                    <label>Erva Aromática</label>
+                    <input type="text" id="loteErva" required>
+                </div>
+                <div class="form-group">
+                    <label>Plano Associado</label>
+                    <select id="lotePlano" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade Inicial</label>
+                    <input type="number" id="loteQuantidade" required>
+                </div>
+                <div class="actions-group">
+                    <button type="submit" class="btn-primary">Criar</button>
+                    <button type="button" id="btnFecharModal" class="btn-action ghost">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

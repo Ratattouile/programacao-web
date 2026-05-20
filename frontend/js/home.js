@@ -1,55 +1,59 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
-
-    if (!utilizadorAcesso) {
-        window.location.href = '/frontend/views/login.html';
-        return;
-    }
+    if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
 
     const utilizador = JSON.parse(utilizadorAcesso);
-    const userDisplay = document.getElementById('userDisplay');
+    document.getElementById('userDisplay').textContent = utilizador.nome;
 
-    if (userDisplay) {
-        userDisplay.textContent = `${utilizador.nome}`;
-    }
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        sessionStorage.removeItem('utilizadorAcesso');
+        sessionStorage.removeItem('token');
+        window.location.href = '/frontend/views/login.html';
+    });
 
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('utilizadorAcesso');
-            window.location.href = '/frontend/views/login.html';
-        });
-    }
+    const token = sessionStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
 
-    async function carregarTabela() {
-        try {
-            const lotes = await getLotes();
-            const tbody = document.getElementById('tabelaLotes');
+    const [resLotes, resAlertas, resTarefas] = await Promise.all([
+        fetch('http://localhost:5000/api/lotes', { headers }),
+        fetch('http://localhost:5000/api/alertas', { headers }),
+        fetch('http://localhost:5000/api/tarefas', { headers })
+    ]);
 
-            tbody.innerHTML = '';
+    const { dados: lotes } = await resLotes.json();
+    const { dados: alertas } = await resAlertas.json();
+    const { dados: tarefas } = await resTarefas.json();
 
-            lotes.forEach(lote => {
-                let corBadge = 'active';
-                if (lote.estado === 'Comprometido') corBadge = 'warning';
-                if (lote.estado === 'Concluído') corBadge = 'concluded';
+    // contadores
+    const lotesAtivos = lotes.filter(l => l.estado === 'Ativo');
+    document.getElementById('contLotesAtivos').textContent = lotesAtivos.length;
+    document.getElementById('infoLotes').textContent = `${lotes.length} lotes no total`;
 
-                let corPlano = '';
-                if (lote.plano === 'Emergência') corPlano = 'emergency';
+    const alertasPendentes = alertas.filter(a => a.estado === 'Pendente');
+    document.getElementById('contAlertasPendentes').textContent = alertasPendentes.length;
+    const criticos = alertasPendentes.filter(a => a.gravidade === 'Crítico').length;
+    document.getElementById('infoAlertas').textContent = `${criticos} crítico(s)`;
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="lot-id">${lote.id}</td>
-                    <td>${lote.erva}</td>
-                    <td><span class="badge ${corBadge}">${lote.estado}</span></td>
-                    <td><span class="plan-tag ${corPlano}">${lote.plano}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
+    const hoje = new Date().toDateString();
+    const tarefasHoje = tarefas.filter(t => new Date(t.prazoLimite).toDateString() === hoje);
+    const tarefasPendentes = tarefasHoje.filter(t => t.estado === 'Pendente');
+    document.getElementById('contTarefasHoje').textContent = tarefasHoje.length;
+    document.getElementById('infoTarefas').textContent = `${tarefasPendentes.length} por completar`;
 
-        } catch (error) {
-            console.error('Erro ao carregar a base de dados', error);
-        }
-    }
-
-    carregarTabela();
+    // tabela lotes recentes
+    const tbody = document.getElementById('tabelaLotes');
+    tbody.innerHTML = '';
+    lotes.slice(0, 5).forEach(lote => {
+        let corBadge = 'active';
+        if (lote.estado === 'Comprometido') corBadge = 'warning';
+        if (lote.estado === 'Concluído') corBadge = 'concluded';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="lot-id">${lote._id}</td>
+            <td>${lote.ervaAromatica}</td>
+            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
+            <td>${lote.planoId?.nome || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 });

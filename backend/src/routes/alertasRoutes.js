@@ -2,13 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const alertasController = require('../controllers/alertasController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 
-router.get('/', alertasController.listarAlertas)
+router.get('/', authMiddleware, alertasController.listarAlertas)
 
-router.patch('/:id/resolver', alertasController.resolverAlerta)
+router.patch('/:id/resolver', authMiddleware, alertasController.resolverAlerta)
 
-router.patch('/:id/ignorar', alertasController.ignorarAlerta)
+router.patch('/:id/ignorar', authMiddleware, alertasController.ignorarAlerta)
 
 
 

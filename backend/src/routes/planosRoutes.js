@@ -2,13 +2,13 @@
 const express = require('express');
 const router = express.Router();
 const planosController = require('../controllers/planosController');
+const authMiddleware = require('../middleware/authMiddleware');
 
+router.get('/', authMiddleware, planosController.listarPlanos)
 
-router.get('/', planosController.listarPlanos)
+router.post('/', authMiddleware, planosController.criarPlanos)
 
-router.post('/', planosController.criarPlanos)
-
-router.patch('/:id/autorizar', planosController.autorizarPlano)
+router.patch('/:id/autorizar', authMiddleware, planosController.autorizarPlano)
 
 
 

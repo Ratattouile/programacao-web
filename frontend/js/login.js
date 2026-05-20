@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        const resposta = await fetch('http://localhost:3000/api/auth/login', {
+        const resposta = await fetch('http://localhost:5000/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (dados.sucesso) {
             sessionStorage.setItem('utilizadorAcesso', JSON.stringify(dados.dados));
+            sessionStorage.setItem('token', dados.dados.token);
             window.location.href = '/frontend/views/home.html';
         } else {
             alert(dados.erro);

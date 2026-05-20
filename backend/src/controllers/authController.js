@@ -1,5 +1,6 @@
 const Utilizador = require('../models/Utilizador');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
     const { nome, username, password, cargo } = req.body;
@@ -35,10 +36,17 @@ exports.login = async (req, res) => {
         const passwordCorreta = await bcrypt.compare(password, utilizador.password);
         if (!passwordCorreta) return res.status(401).json({ sucesso: false, erro: "Credenciais inválidas." });
 
+        const token = jwt.sign(
+            { id: utilizador._id, cargo: utilizador.cargo },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
+
         return res.status(200).json({
             sucesso: true,
             mensagem: "Login efetuado com sucesso!",
-            dados: { id: utilizador._id, nome: utilizador.nome, cargo: utilizador.cargo }
+            dados: { id: utilizador._id, nome: utilizador.nome, cargo: utilizador.cargo, token }
         });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
