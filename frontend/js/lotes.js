@@ -1,3 +1,9 @@
+let loteIdSelecionado = null;
+function dividirLote(id) {
+    loteIdSelecionado = id;
+    document.getElementById('modalDividirLote').style.display = 'flex';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -33,6 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td class="lot-id">${lote._id}</td>
             <td>${lote.ervaAromatica}</td>
             <td>${lote.planoId?.nome || '-'}</td>
+            <td>${lote.quantidadeAtual}</td>
+            <td>${lote.quantidadeInicial}</td>
             <td>${dataInicio}</td>
             <td><span class="badge ${corBadge}">${lote.estado}</span></td>
             <td>
@@ -85,4 +93,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    document.getElementById('btnFecharModalDividir').addEventListener('click', () => {
+        document.getElementById('modalDividirLote').style.display = 'none';
+    });
+
+    document.getElementById('formDividirLote').addEventListener('submit', async (e) =>{
+        e.preventDefault();
+        const quantidadeSeparar = parseInt(document.getElementById('dividirQuantidade').value);
+
+        const resposta = await fetch(`http://localhost:5000/api/lotes/${loteIdSelecionado}/dividir`, {
+            method: 'POST',
+            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+            body: JSON.stringify({ quantidadeSeparar })
+        });
+
+        const dados = await resposta.json();
+        if(dados.sucesso){
+            document.getElementById('modalDividirLote').style.display = 'none';
+            location.reload();
+        }else{
+            alert(dados.erro);
+        }
+    });
 });
