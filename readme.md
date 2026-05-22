@@ -6,7 +6,7 @@ Este é o repositório central do projeto GREENHERB, dividido entre **Frontend**
 
 ## Tecnologias
 
-**Frontend:** HTML, CSS, JavaScript
+**Frontend:** HTML, CSS, JavaScript  
 **Backend:** Node.js, Express  
 **Base de Dados:** MongoDB Atlas (Mongoose)  
 **Autenticação:** JWT + bcrypt 
