@@ -87,12 +87,12 @@ button {
 }
 
 .btn-action.green {
-    background: rgba(72, 187, 120, 0.12);
+    background: rgba(73, 187, 120, 0.12);
     color: #5ecc8a;
-    border: 0.5px solid rgba(72, 187, 120, 0.3);
+    border: 0.5px solid rgba(73, 187, 120, 0.3);
 }
 
-.btn-action.green:hover { background: rgba(72, 187, 120, 0.2); }
+.btn-action.green:hover { background: rgba(73, 187, 120, 0.2); }
 
 .btn-action.red {
     background: rgba(211, 47, 47, 0.1);
@@ -132,16 +132,16 @@ button {
     font-size: 13px;
     padding: 7px 14px;
     border-radius: 8px;
-    background: rgba(72, 187, 120, 0.12);
+    background: rgba(73, 187, 120, 0.12);
     color: #5ecc8a;
-    border: 0.5px solid rgba(72, 187, 120, 0.3);
+    border: 0.5px solid rgba(73, 187, 120, 0.3);
     cursor: pointer;
     text-decoration: none;
     transition: all 0.15s;
     font-family: 'DM Sans', sans-serif;
 }
 
-.topbar-action:hover { background: rgba(72, 187, 120, 0.2); }
+.topbar-action:hover { background: rgba(73, 187, 120, 0.2); }
 
 
 /* --- LOGIN PÁGINA --- */
@@ -165,7 +165,7 @@ button {
     width: 260px;
     height: 260px;
     border-radius: 50%;
-    background: rgba(72, 187, 120, 0.07);
+    background: rgba(73, 187, 120, 0.07);
     pointer-events: none;
 }
 
@@ -177,7 +177,7 @@ button {
     width: 320px;
     height: 320px;
     border-radius: 50%;
-    background: rgba(72, 187, 120, 0.05);
+    background: rgba(73, 187, 120, 0.05);
     pointer-events: none;
 }
 
@@ -201,7 +201,7 @@ button {
     max-width: 480px;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 0.5px solid rgba(72, 187, 120, 0.25);
+    border: 0.5px solid rgba(73, 187, 120, 0.25);
 }
 
 .form-group {
@@ -235,7 +235,7 @@ button {
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: rgba(72, 187, 120, 0.5);
+    border-color: rgba(73, 187, 120, 0.5);
 }
 
 .form-group input::placeholder {
@@ -264,7 +264,7 @@ button {
 }
 
 .voltar-login:hover {
-    color: rgba(72, 187, 120, 0.8);
+    color: rgba(73, 187, 120, 0.8);
 }
 
 .gh-divider {
@@ -279,7 +279,7 @@ button {
     content: '';
     flex: 1;
     height: 0.5px;
-    background: rgba(72, 187, 120, 0.2);
+    background: rgba(73, 187, 120, 0.2);
 }
 
 .gh-divider-dot {
@@ -476,10 +476,10 @@ button {
 }
 
 .status-indicator {
-    border: 0.5px solid rgba(72, 187, 120, 0.4);
+    border: 0.5px solid rgba(73, 187, 120, 0.4);
     padding: 5px 12px;
     border-radius: 25px;
-    background-color: rgba(72, 187, 120, 0.08);
+    background-color: rgba(73, 187, 120, 0.08);
     font-size: 13px;
     white-space: nowrap;
 }
@@ -510,7 +510,7 @@ button {
 
 .card {
     background: #162d20;
-    border: 0.5px solid rgba(72, 187, 120, 0.15);
+    border: 0.5px solid rgba(73, 187, 120, 0.15);
     border-radius: 12px;
     padding: 1.1rem 1.25rem;
     position: relative;
@@ -521,7 +521,7 @@ button {
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: rgba(72, 187, 120, 0.12);
+    background: rgba(73, 187, 120, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -646,9 +646,9 @@ button {
 }
 
 .badge.active {
-    background: rgba(72, 187, 120, 0.1);
+    background: rgba(73, 187, 120, 0.1);
     color: #5ecc8a;
-    border: 0.5px solid rgba(72, 187, 120, 0.2);
+    border: 0.5px solid rgba(73, 187, 120, 0.2);
 }
 
 .badge.warning {
