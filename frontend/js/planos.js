@@ -19,8 +19,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const regulares = dados.dados.filter(p => p.tipo === 'Regular').length;
     const pontuais = dados.dados.filter(p => p.tipo === 'Pontual').length;
+    const emergencias = dados.dados.filter(p => p.tipo === 'Emergencia').length;
     document.getElementById('contPlanosRegulares').textContent = regulares;
     document.getElementById('contPlanosPontuais').textContent = pontuais;
+    document.getElementById('contPlanosEmergencias').textContent = emergencias;
 
     const tbody = document.getElementById('tabelaPlanos');
     tbody.innerHTML = '';
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     dados.dados.forEach(plano => {
         let corBadge = 'active';
         if (plano.tipo === 'Pontual') corBadge = 'concluded';
+        if (plano.tipo === 'Emergencia') corBadge = 'warning';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
