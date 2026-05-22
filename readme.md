@@ -35,7 +35,7 @@ programacao-web/
 
 ### Pré-requesitos
 - Node.js v18+
-- Conta no MongoDB Atlas
+- Conta no MongoDB Atlas.
 
 ### 1. Clonar o repositório
 ```bash
