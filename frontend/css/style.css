@@ -179,6 +179,7 @@ button {
     border-radius: 50%;
     background: rgba(72, 187, 120, 0.05);
     pointer-events: none;
+    z-index: -1;
 }
 
 .login-header {
