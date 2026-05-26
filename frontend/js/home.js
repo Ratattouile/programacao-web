@@ -15,6 +15,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/frontend/views/login.html';
     });
 
+    const ficheiroCSV = document.getElementById('ficheiroCSV');
+    if (ficheiroCSV) {
+        ficheiroCSV.addEventListener('change', () => {
+            const dropZone = document.getElementById('fileDropZone');
+            const fileLabel = document.getElementById('fileLabel');
+            if (ficheiroCSV.files.length > 0) {
+                fileLabel.textContent = ficheiroCSV.files[0].name;
+                dropZone.classList.add('has-file');
+            } else {
+                fileLabel.textContent = 'Selecionar ficheiro .csv';
+                dropZone.classList.remove('has-file');
+            }
+        });
+    }
+
     const btnImportar = document.getElementById('btnImportarCSV');
     if (btnImportar) {
         btnImportar.addEventListener('click', async () => {
@@ -38,7 +53,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (dados.sucesso) {
                     alert('Sucesso! ' + dados.mensagem);
-                    inputFicheiro.value = ''; 
+                    inputFicheiro.value = '';
+                    document.getElementById('fileLabel').textContent = 'Selecionar ficheiro .csv';
+                    document.getElementById('fileDropZone').classList.remove('has-file');
                 } else {
                     alert('Erro na importação: ' + dados.erro);
                 }

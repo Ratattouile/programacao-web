@@ -3,7 +3,7 @@
 :root {
     --primary-color: #4CB572;
     --primary-light: #A1D8B5;
-    --bg-color: #0f2318;
+    --bg-color: #111e16;
     --text-main: #CCDCDB;
     --border-color: rgba(255, 255, 255, 0.15);
     --warning-color: #ed6c02;
@@ -19,6 +19,10 @@
 
 body {
     background-color: var(--bg-color);
+    background-image:
+        radial-gradient(ellipse 70% 50% at 5% 10%, rgba(40, 120, 65, 0.22) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 50% at 95% 90%, rgba(25, 80, 45, 0.18) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(201, 168, 76, 0.03) 0%, transparent 100%);
     color: var(--text-main);
     font-family: 'DM Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -132,16 +136,20 @@ button {
     font-size: 13px;
     padding: 7px 14px;
     border-radius: 8px;
-    background: rgba(73, 187, 120, 0.12);
-    color: #5ecc8a;
-    border: 0.5px solid rgba(73, 187, 120, 0.3);
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.06));
+    color: #c9a84c;
+    border: 0.5px solid rgba(201, 168, 76, 0.35);
+    box-shadow: 0 2px 10px rgba(201, 168, 76, 0.08);
     cursor: pointer;
     text-decoration: none;
     transition: all 0.15s;
     font-family: 'DM Sans', sans-serif;
 }
 
-.topbar-action:hover { background: rgba(73, 187, 120, 0.2); }
+.topbar-action:hover {
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.25), rgba(201, 168, 76, 0.12));
+    box-shadow: 0 2px 14px rgba(201, 168, 76, 0.15);
+}
 
 
 /* --- LOGIN PÁGINA --- */
@@ -151,7 +159,7 @@ button {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a3a2a 0%, #0d2318 40%, #1a3a2a 100%);
+    background: linear-gradient(135deg, #121a0e 0%, #080f08 40%, #121a0e 100%);
     position: relative;
     overflow: hidden;
     padding: 1rem;
@@ -236,7 +244,7 @@ button {
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: rgba(73, 187, 120, 0.5);
+    border-color: rgba(201, 168, 76, 0.5);
 }
 
 .form-group input::placeholder {
@@ -303,7 +311,9 @@ button {
 
 /* Navbar de Topo */
 .top-navbar {
-    background: #0f2318;
+    background: rgba(8, 14, 10, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-bottom: 0.5px solid rgba(94, 204, 138, 0.12);
     display: flex;
     align-items: center;
@@ -349,8 +359,8 @@ button {
 }
 
 .navbar-nav a.active {
-    color: #5ecc8a;
-    background: rgba(94, 204, 138, 0.1);
+    color: #c9a84c;
+    background: rgba(201, 168, 76, 0.1);
 }
 
 .navbar-user {
@@ -371,14 +381,14 @@ button {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: rgba(94, 204, 138, 0.1);
-    border: 1px solid rgba(94, 204, 138, 0.3);
+    background: rgba(201, 168, 76, 0.08);
+    border: 1px solid rgba(201, 168, 76, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     font-weight: 500;
-    color: #5ecc8a;
+    color: #c9a84c;
     flex-shrink: 0;
 }
 
@@ -406,7 +416,7 @@ button {
     height: 8px;
     border-radius: 50%;
     background: #ed6c02;
-    border: 1.5px solid #0f2318;
+    border: 1.5px solid #111e16;
 }
 
 .logout-btn {
@@ -435,7 +445,7 @@ button {
     position: absolute;
     bottom: -30px;
     right: 0;
-    background: #1a2e2a;
+    background: #1a1e12;
     color: var(--text-main);
     font-size: 11px;
     padding: 3px 8px;
@@ -516,12 +526,29 @@ button {
 }
 
 .card {
-    background: #162d20;
-    border: 0.5px solid rgba(73, 187, 120, 0.15);
+    background: linear-gradient(145deg, #223d2c 0%, #1b3224 100%);
+    border: 0.5px solid rgba(73, 187, 120, 0.22);
     border-radius: 12px;
     padding: 1.1rem 1.25rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.cards-grid .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(94, 204, 138, 0.25);
+    border-color: rgba(94, 204, 138, 0.35);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(94, 204, 138, 0.25), rgba(201, 168, 76, 0.1), transparent);
+    pointer-events: none;
 }
 
 .card-icon {
@@ -542,7 +569,7 @@ button {
     letter-spacing: 1.2px;
     text-transform: uppercase;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .card-info {
@@ -553,10 +580,11 @@ button {
 .card-value {
     font-size: 2rem;
     font-weight: 500;
-    color: #e4f5ec;
+    color: #f0f8f2;
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
     line-height: 1;
+    text-shadow: 0 0 20px rgba(94, 204, 138, 0.2);
 }
 
 .card-value.warning { color: var(--warning-color); }
@@ -573,6 +601,7 @@ button {
     align-items: center;
     padding: 1rem 1.4rem;
     border-bottom: 0.5px solid rgba(94, 204, 138, 0.08);
+    background: linear-gradient(90deg, rgba(94, 204, 138, 0.03) 0%, transparent 60%);
     flex-wrap: wrap;
     gap: 8px;
 }
@@ -588,8 +617,8 @@ button {
 
 .table-count {
     font-size: 11px;
-    background: rgba(94, 204, 138, 0.1);
-    color: #5ecc8a;
+    background: rgba(201, 168, 76, 0.1);
+    color: #c9a84c;
     padding: 2px 8px;
     border-radius: 20px;
     font-weight: 400;
@@ -597,12 +626,12 @@ button {
 
 .table-action {
     font-size: 12px;
-    color: rgba(94, 204, 138, 0.55);
+    color: rgba(201, 168, 76, 0.6);
     text-decoration: none;
     transition: color 0.15s;
 }
 
-.table-action:hover { color: #5ecc8a; }
+.table-action:hover { color: #c9a84c; }
 
 /* Tabelas */
 .data-table {
@@ -623,7 +652,7 @@ button {
 
 .data-table td {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.75);
     padding: 13px 1.4rem;
     border-bottom: 0.5px solid rgba(94, 204, 138, 0.06);
 }
@@ -631,15 +660,19 @@ button {
 .data-table tbody tr:last-child td { border-bottom: none; }
 
 .data-table tbody tr:hover td {
-    background: rgba(94, 204, 138, 0.025);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(94, 204, 138, 0.05);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .lot-id {
     font-family: 'DM Mono', monospace;
     font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.4);
     letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
 }
 
 .badge {
@@ -685,8 +718,8 @@ button {
 }
 
 .metric-card {
-    background: #162d20;
-    border: 0.5px solid rgba(94, 204, 138, 0.1);
+    background: linear-gradient(145deg, #223d2c 0%, #1b3224 100%);
+    border: 0.5px solid rgba(94, 204, 138, 0.15);
     border-radius: 12px;
     padding: 1.1rem 1.4rem;
     position: relative;
@@ -700,10 +733,10 @@ button {
     height: 2px;
 }
 
-.metric-card.default::before { background: rgba(94, 204, 138, 0.4); }
-.metric-card.danger::before  { background: rgba(211, 47, 47, 0.6); }
-.metric-card.warn::before    { background: rgba(237, 108, 2, 0.5); }
-.metric-card.info::before    { background: rgba(56, 161, 221, 0.5); }
+.metric-card.default::before { background: linear-gradient(90deg, rgba(94, 204, 138, 0.6), rgba(94, 204, 138, 0.15)); }
+.metric-card.danger::before  { background: linear-gradient(90deg, rgba(211, 47, 47, 0.7), rgba(211, 47, 47, 0.15)); }
+.metric-card.warn::before    { background: linear-gradient(90deg, rgba(237, 108, 2, 0.6), rgba(237, 108, 2, 0.15)); }
+.metric-card.info::before    { background: linear-gradient(90deg, rgba(56, 161, 221, 0.6), rgba(56, 161, 221, 0.15)); }
 
 .metric-card h3 {
     font-size: 11px;
@@ -732,6 +765,7 @@ button {
     gap: 8px;
     padding: 1rem 1.4rem;
     border-bottom: 0.5px solid rgba(94, 204, 138, 0.08);
+    background: linear-gradient(90deg, rgba(94, 204, 138, 0.03) 0%, transparent 60%);
 }
 
 .section-title-row h2 {
@@ -753,7 +787,7 @@ button {
     font-family: 'DM Sans', sans-serif;
 }
 
-.justif-input:focus { border-color: rgba(94, 204, 138, 0.4); }
+.justif-input:focus { border-color: rgba(201, 168, 76, 0.4); }
 
 .justif-input::placeholder {
     color: rgba(255, 255, 255, 0.2);
@@ -892,8 +926,9 @@ button {
 }
  
 .modal {
-    background: #1c2e1c;
-    border: 1px solid #2e4e2e;
+    background: linear-gradient(160deg, #162516 0%, #0c140c 100%);
+    border: 1px solid rgba(201, 168, 76, 0.18);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.04);
     border-radius: 14px;
     width: 420px;
     max-width: 95vw;
@@ -922,7 +957,7 @@ button {
     height: 32px;
     min-width: 32px;
     border-radius: 8px;
-    background: #2a4a2a;
+    background: #2a2010;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -938,7 +973,7 @@ button {
  
 .modal-subtitle {
     font-size: 12px;
-    color: #5a8a5a;
+    color: rgba(201, 168, 76, 0.5);
     margin: 0;
     line-height: 1.5;
 }
@@ -958,12 +993,12 @@ button {
 }
  
 .btn-close:hover {
-    background: #2a3a2a;
+    background: #1e1e14;
 }
  
 .modal-divider {
     height: 1px;
-    background: #253525;
+    background: #1c1f1c;
     margin: 0 24px;
 }
  
@@ -984,13 +1019,13 @@ button {
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #5a8a5a;
+    color: rgba(201, 168, 76, 0.6);
 }
  
 .form-group input,
 .form-group select {
-    background: #152515;
-    border: 1px solid #2e4e2e;
+    background: #0d120d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 14px;
@@ -1004,12 +1039,12 @@ button {
 }
  
 .form-group input::placeholder {
-    color: #3a5a3a;
+    color: rgba(255, 255, 255, 0.2);
 }
  
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #4a7a4a;
+    border-color: rgba(201, 168, 76, 0.45);
 }
  
 .select-wrapper {
@@ -1043,7 +1078,7 @@ button {
     top: 50%;
     transform: translateY(-50%);
     font-size: 12px;
-    color: #4a7a4a;
+    color: rgba(201, 168, 76, 0.4);
     pointer-events: none;
 }
  
@@ -1057,29 +1092,30 @@ button {
     flex: 1;
     padding: 11px;
     background: transparent;
-    border: 1px solid #2e4e2e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
-    color: #6b9e6b;
+    color: rgba(255, 255, 255, 0.45);
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
- 
+
 .btn-action.ghost:hover {
-    background: #1e321e;
-    border-color: #3a6b3a;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
 }
  
 .btn-terceario {
     flex: 2;
     padding: 11px;
-    background: #2d6a2d;
-    border: 1px solid #3a7a3a;
+    background: linear-gradient(135deg, #3d3010 0%, #26200a 100%);
+    border: 1px solid rgba(201, 168, 76, 0.4);
+    box-shadow: 0 4px 14px rgba(201, 168, 76, 0.1);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
-    color: #a8e6a8;
+    color: #c9a84c;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1087,22 +1123,68 @@ button {
     gap: 8px;
     transition: background 0.15s;
 }
- 
+
 .btn-terceario:hover {
-    background: #3a7a3a;
+    background: rgba(201, 168, 76, 0.2);
 }
 
 
-.btn-secondary{
-    background-color: #1a2e1a00;
+.btn-secondary {
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), rgba(201, 168, 76, 0.02));
     border-radius: 50px;
-    border: 2px solid #3a6b3a;
-    font-weight: bold;
-    color: #a8e6a8;
+    border: 1.5px solid rgba(201, 168, 76, 0.45);
+    font-weight: 500;
+    color: #c9a84c;
     transition: 0.2s;
+    box-shadow: 0 2px 10px rgba(201, 168, 76, 0.06);
 }
 
-.btn-secondary:hover{
-    border-color: #6b9e6b;
-    background-color: rgba(45,106,45,0.25);
+.btn-secondary:hover {
+    border-color: #c9a84c;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08));
+    box-shadow: 0 2px 14px rgba(201, 168, 76, 0.14);
+}
+
+.import-card {
+    margin-top: 12px;
+}
+
+.import-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem 1.4rem 1.4rem;
+}
+
+.file-drop-zone {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: rgba(201, 168, 76, 0.04);
+    border: 1px dashed rgba(201, 168, 76, 0.2);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.file-drop-zone:hover {
+    background: rgba(201, 168, 76, 0.08);
+    border-color: rgba(201, 168, 76, 0.35);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.file-drop-zone.has-file {
+    border-style: solid;
+    border-color: rgba(201, 168, 76, 0.4);
+    color: #c9a84c;
+    background: rgba(201, 168, 76, 0.07);
 }
