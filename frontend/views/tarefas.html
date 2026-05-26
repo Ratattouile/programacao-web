@@ -12,24 +12,24 @@
 </head>
 
 <body class="app-layout">
-
-    <header class="top-navbar">
+<header class="top-navbar">
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
 
         <nav class="navbar-nav">
             <ul>
-                <a href="/frontend/views/home.html">Visão Geral</a></li>
+                <li><a href="/frontend/views/home.html">Visão Geral</a></li>
                 <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
                 <li><a href="/frontend/views/plano.html">Planos de Cultivo</a></li>
                 <li><a href="/frontend/views/tarefas.html" class="active">Tarefas</a></li>
-                <li><a href="/frontend/views/alertas.html">Alertas</a></li>
+                <!--<li><a href="/frontend/views/alertas.html">Alertas</a></li>-->
+                <li><a href="/frontend/views/plantas.html">Plantas</a></li>
             </ul>
         </nav>
 
         <div class="navbar-user">
-            <button class="alert-btn" aria-label="Alertas">
+            <button class="alert-btn" aria-label="Alertas" onclick="window.location.href='/frontend/views/alertas.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
                 <div class="alert-dot"></div>
             </button>
@@ -45,8 +45,7 @@
     <main class="main-content">
         <header class="topbar">
             <h1>Tarefas Operacionais</h1>
-            <a href="#" class="btn-primary"
-                style="padding:10px;text-decoration: none; width: auto; border-radius: 5px;">+ Nova Tarefa</a>
+            <button class="btn-secondary">+ Nova Tarefa</button>
         </header>
 
         <section class="content-area">

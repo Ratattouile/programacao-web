@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const planoSchema = new mongoose.Schema({
     nome: { type: String, required: true },
     ervaAromatica: { type: String, required: true },
-    tipo: { type: String, required: true, enum: ['Regular', 'Pontual'] },
+    tipo: { type: String, required: true, enum: ['Regular', 'Pontual', 'Emergencia'] },
     automacao: { type: String, required: true },
     regrasAutomacao: { type: String, default: '' },
     estadoAutorizacao: { type: String, default: 'Aprovado', enum: ['Aprovado', 'Pendente'] },
+    tarefa: { type: String, required: true, enum: ['Rega', 'Fertilização', 'Colheita', 'Monitorização'] },
     dataCriacao: { type: Date, default: Date.now }
 });
 
