@@ -14,12 +14,16 @@ const lotesRoutes = require('./routes/lotesRoutes.js')
 const tarefasRoutes = require('./routes/tarefasRoutes.js')
 const alertasRoutes = require('./routes/alertasRoutes.js')
 const authRoutes = require('./routes/authRoutes.js')
+const plantasRoutes = require('./routes/plantasRoutes.js')
+
 
 app.use('/api/auth', authRoutes)
 app.use('/api/planos', planosRoutes)
 app.use('/api/lotes', lotesRoutes)
 app.use('/api/tarefas', tarefasRoutes)
 app.use('/api/alertas', alertasRoutes)
+app.use('/api/plantas', plantasRoutes)
+
 
 connectDB();
 

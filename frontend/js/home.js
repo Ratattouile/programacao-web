@@ -1,59 +1,100 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
-    if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
+    if (!utilizadorAcesso) { 
+        window.location.href = '/frontend/views/login.html'; 
+        return; 
+    }
 
     const utilizador = JSON.parse(utilizadorAcesso);
+    const token = sessionStorage.getItem('token'); 
+
     document.getElementById('userDisplay').textContent = utilizador.nome;
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-        sessionStorage.removeItem('utilizadorAcesso');
-        sessionStorage.removeItem('token');
+        sessionStorage.clear(); 
         window.location.href = '/frontend/views/login.html';
     });
 
-    const token = sessionStorage.getItem('token');
+    const btnImportar = document.getElementById('btnImportarCSV');
+    if (btnImportar) {
+        btnImportar.addEventListener('click', async () => {
+            const inputFicheiro = document.getElementById('ficheiroCSV');
+            
+            if (inputFicheiro.files.length === 0) {
+                return alert('Por favor, escolha um ficheiro CSV primeiro!');
+            }
+
+            const formData = new FormData();
+            formData.append('ficheiro', inputFicheiro.files[0]);
+
+            try {
+                const resposta = await fetch('http://localhost:5000/api/plantas/importar', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+                    alert('Sucesso! ' + dados.mensagem);
+                    inputFicheiro.value = ''; 
+                } else {
+                    alert('Erro na importação: ' + dados.erro);
+                }
+            } catch (err) {
+                alert('Erro de ligação ao servidor.');
+            }
+        });
+    }
+
+
     const headers = { 'Authorization': `Bearer ${token}` };
 
-    const [resLotes, resAlertas, resTarefas] = await Promise.all([
-        fetch('http://localhost:5000/api/lotes', { headers }),
-        fetch('http://localhost:5000/api/alertas', { headers }),
-        fetch('http://localhost:5000/api/tarefas', { headers })
-    ]);
+    try {
+        const [resLotes, resAlertas, resTarefas] = await Promise.all([
+            fetch('http://localhost:5000/api/lotes', { headers }),
+            fetch('http://localhost:5000/api/alertas', { headers }),
+            fetch('http://localhost:5000/api/tarefas', { headers })
+        ]);
 
-    const { dados: lotes } = await resLotes.json();
-    const { dados: alertas } = await resAlertas.json();
-    const { dados: tarefas } = await resTarefas.json();
+        const { dados: lotes } = await resLotes.json();
+        const { dados: alertas } = await resAlertas.json();
+        const { dados: tarefas } = await resTarefas.json();
 
-    // contadores
-    const lotesAtivos = lotes.filter(l => l.estado === 'Ativo');
-    document.getElementById('contLotesAtivos').textContent = lotesAtivos.length;
-    document.getElementById('infoLotes').textContent = `${lotes.length} lotes no total`;
+        // Contadores
+        const lotesAtivos = lotes.filter(l => l.estado === 'Ativo');
+        document.getElementById('contLotesAtivos').textContent = lotesAtivos.length;
+        document.getElementById('infoLotes').textContent = `${lotes.length} lotes no total`;
 
-    const alertasPendentes = alertas.filter(a => a.estado === 'Pendente');
-    document.getElementById('contAlertasPendentes').textContent = alertasPendentes.length;
-    const criticos = alertasPendentes.filter(a => a.gravidade === 'Crítico').length;
-    document.getElementById('infoAlertas').textContent = `${criticos} crítico(s)`;
+        const alertasPendentes = alertas.filter(a => a.estado === 'Pendente');
+        document.getElementById('contAlertasPendentes').textContent = alertasPendentes.length;
+        const criticos = alertasPendentes.filter(a => a.gravidade === 'Crítico').length;
+        document.getElementById('infoAlertas').textContent = `${criticos} crítico(s)`;
 
-    const hoje = new Date().toDateString();
-    const tarefasHoje = tarefas.filter(t => new Date(t.prazoLimite).toDateString() === hoje);
-    const tarefasPendentes = tarefasHoje.filter(t => t.estado === 'Pendente');
-    document.getElementById('contTarefasHoje').textContent = tarefasHoje.length;
-    document.getElementById('infoTarefas').textContent = `${tarefasPendentes.length} por completar`;
+        const hoje = new Date().toDateString();
+        const tarefasHoje = tarefas.filter(t => new Date(t.prazoLimite).toDateString() === hoje);
+        const tarefasPendentes = tarefasHoje.filter(t => t.estado === 'Pendente');
+        document.getElementById('contTarefasHoje').textContent = tarefasHoje.length;
+        document.getElementById('infoTarefas').textContent = `${tarefasPendentes.length} por completar`;
 
-    // tabela lotes recentes
-    const tbody = document.getElementById('tabelaLotes');
-    tbody.innerHTML = '';
-    lotes.slice(0, 5).forEach(lote => {
-        let corBadge = 'active';
-        if (lote.estado === 'Comprometido') corBadge = 'warning';
-        if (lote.estado === 'Concluído') corBadge = 'concluded';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="lot-id">${lote._id}</td>
-            <td>${lote.ervaAromatica}</td>
-            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
-            <td>${lote.planoId?.nome || '-'}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+        // Tabela lotes recentes
+        const tbody = document.getElementById('tabelaLotes');
+        tbody.innerHTML = '';
+        lotes.slice(0, 5).forEach(lote => {
+            let corBadge = 'active';
+            if (lote.estado === 'Comprometido') corBadge = 'warning';
+            if (lote.estado === 'Concluído') corBadge = 'concluded';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="lot-id">${lote._id}</td>
+                <td>${lote.ervaAromatica}</td>
+                <td><span class="badge ${corBadge}">${lote.estado}</span></td>
+                <td>${lote.planoId?.nome || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Erro a carregar a dashboard:", err);
+    }
 });
