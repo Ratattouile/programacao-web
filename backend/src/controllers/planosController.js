@@ -10,15 +10,15 @@ exports.listarPlanos = async (req, res) => {
 };
 
 exports.criarPlanos = async (req, res) => {
-    const { nome, ervaAromatica, tipo, automacao, regrasAutomacao } = req.body;
+    const { nome, ervaAromatica, tipo, automacao, regrasAutomacao, tarefa } = req.body;
 
-    if (!nome || !ervaAromatica || !tipo || !automacao) {
+    if (!nome || !ervaAromatica || !tipo || !automacao || !tarefa) {
         return res.status(400).json({ sucesso: false, erro: "Faltam campos obrigatorios" });
     }
 
     try {
         const estadoAutorizacao = tipo === "Pontual" ? "Pendente" : "Aprovado";
-        const novoPlano = await Plano.create({ nome, ervaAromatica, tipo, automacao, regrasAutomacao, estadoAutorizacao });
+        const novoPlano = await Plano.create({ nome, ervaAromatica, tipo, automacao, regrasAutomacao, estadoAutorizacao, tarefa });
         return res.status(201).json({ sucesso: true, mensagem: "Plano criado com sucesso", dados: novoPlano });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });

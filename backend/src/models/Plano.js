@@ -7,6 +7,7 @@ const planoSchema = new mongoose.Schema({
     automacao: { type: String, required: true },
     regrasAutomacao: { type: String, default: '' },
     estadoAutorizacao: { type: String, default: 'Aprovado', enum: ['Aprovado', 'Pendente'] },
+    tarefa: { type: String, required: true, enum: ['Rega', 'Fertilização', 'Colheita', 'Monitorização'] },
     dataCriacao: { type: Date, default: Date.now }
 });
 

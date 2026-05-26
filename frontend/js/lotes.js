@@ -24,6 +24,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     const dados = await resposta.json();
 
+        const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const dadosPlantas = await respostaPlantas.json();
+
+    const selectErva = document.getElementById('loteErva');
+    selectErva.innerHTML = '<option value="" disabled selected>Seleciona uma erva...</option>';
+
+    dadosPlantas.dados.forEach(planta => {
+        const option = document.createElement('option');
+        option.value = planta.nome;
+        option.textContent = `${planta.nome} (${planta.especie})`;
+        selectErva.appendChild(option);
+    });
+
+
     const tbody = document.getElementById('tabelaLotes');
     tbody.innerHTML = '';
 

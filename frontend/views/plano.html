@@ -24,12 +24,14 @@
                 <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
                 <li><a href="/frontend/views/plano.html" class="active">Planos de Cultivo</a></li>
                 <li><a href="/frontend/views/tarefas.html">Tarefas</a></li>
-                <li><a href="/frontend/views/alertas.html">Alertas</a></li>
+                <!--<li><a href="/frontend/views/alertas.html">Alertas</a></li>-->
+                <li><a href="/frontend/views/plantas.html">Plantas</a></li>
             </ul>
         </nav>
 
         <div class="navbar-user">
-            <button class="alert-btn" aria-label="Alertas">
+            <button class="alert-btn" aria-label="Alertas"
+                onclick="window.location.href='/frontend/views/alertas.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
                 <div class="alert-dot"></div>
             </button>
@@ -75,6 +77,7 @@
                             <th>Erva Aromática</th>
                             <th>Tipo</th>
                             <th>Automação</th>
+                            <th>Tarefa</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -91,7 +94,7 @@
                 <div class="modal-title-group">
                     <div class="modal-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M8 2v12M2 8h12" stroke="#a8e6a8" stroke-width="1.8" stroke-linecap="round"/>
+                            <path d="M8 2v12M2 8h12" stroke="#a8e6a8" stroke-width="1.8" stroke-linecap="round" />
                         </svg>
                     </div>
                     <div>
@@ -101,7 +104,7 @@
                 </div>
                 <button type="button" class="btn-close btn-fechar-modal-plano" aria-label="Fechar">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M2 2l10 10M12 2L2 12" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round"/>
+                        <path d="M2 2l10 10M12 2L2 12" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round" />
                     </svg>
                 </button>
             </div>
@@ -113,7 +116,7 @@
                 </div>
                 <div class="form-group">
                     <label for="planoErva">Erva Aromática</label>
-                    <input type="text" id="planoErva" placeholder="ex: Hortelã, Manjericão…" required>
+                    <select id="planoErva" placeholder="ex: Hortelã, Manjericão…" required></select>
                 </div>
                 <div class="form-group">
                     <label for="planoTipo">Tipo</label>
@@ -124,20 +127,46 @@
                             <option value="Emergencia">Emergência</option>
                         </select>
                         <svg class="select-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M3 5l4 4 4-4" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 5l4 4 4-4" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round"
+                                stroke-linejoin="round" />
                         </svg>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="planoAutomacao">Automação</label>
-                    <input type="text" id="planoAutomacao" placeholder="ex: Rega automática às 08h" required>
+                    <div class="select-wrapper">
+                        <select id="planoAutomacao" required>
+                            <option value="Manual">Manual</option>
+                            <option value="Automatico">Automático</option>
+                        </select>
+                        <svg class="select-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M3 5l4 4 4-4" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="planoTarefa">Tarefa</label>
+                    <div class="select-wrapper">
+                        <select id="planoTarefa" required>
+                            <option value="Rega">Rega</option>
+                            <option value="Fertilização">Fertilização</option>
+                            <option value="Colheita">Colheita</option>
+                            <option value="Monitorização">Monitorização</option>
+                        </select>
+                        <svg class="select-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M3 5l4 4 4-4" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
                 </div>
                 <div class="modal-divider"></div>
                 <div class="actions-group">
                     <button type="button" id="btnFecharModalPlano" class="btn-action ghost">Cancelar</button>
                     <button type="submit" class="btn-terceario">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M2 7l4 4 6-7" stroke="#a8e6a8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 7l4 4 6-7" stroke="#a8e6a8" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
                         </svg>
                         Criar plano
                     </button>
