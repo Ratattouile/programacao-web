@@ -1,0 +1,383 @@
+openapi: 3.0.0
+info:
+  title: GREENHERB API Completa
+  version: 1.0.0
+  description: API central para gestão da estufa (Autenticação, Planos, Lotes, Tarefas e Alertas).
+
+paths:
+  # ==========================================
+  # 1. AUTENTICAÇÃO
+  # ==========================================
+  /api/auth/registar:
+    post:
+      summary: Registar um novo funcionário
+      tags: [Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, perfil, username, password]
+              properties:
+                nome: { type: string, example: "Maria Silva" }
+                perfil: { type: string, enum: [Técnico, Responsável Técnico, Administrador] }
+                username: { type: string, example: "mariasilva.tec" }
+                password: { type: string, format: password }
+      responses:
+        '201': { description: "Conta criada com sucesso" }
+
+  /api/auth/login:
+    post:
+      summary: Autenticar no sistema (Login)
+      tags: [Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: "admin" }
+                password: { type: string, format: password }
+      responses:
+        '200': { description: "Login efetuado com sucesso" }
+
+  # ==========================================
+  # 2. PLANOS DE CULTIVO
+  # ==========================================
+  /api/planos:
+    get:
+      summary: Listar todos os planos de cultivo
+      tags: [Planos]
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Plano' }
+    post:
+      summary: Registar um novo Plano
+      tags: [Planos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, ervaAromatica, tipo, automacao]
+              properties:
+                nome: { type: string, example: "Plano Inverno" }
+                ervaAromatica: { type: string, example: "Manjericão" }
+                tipo: { type: string, enum: [Regular, Emergência, Pontual] }
+                automacao: { type: string, enum: [Manual, Automático] }
+                regrasAutomacao: { type: string }
+      responses:
+        '201': { description: "Plano criado" }
+
+  /api/planos/{id}/autorizar:
+    patch:
+      summary: Autorizar um plano Pontual
+      tags: [Planos]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: "Autorizado com sucesso" }
+
+  # ==========================================
+  # 3. LOTES DE CULTIVO
+  # ==========================================
+  /api/lotes:
+    get:
+      summary: Listar todos os lotes
+      tags: [Lotes]
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Lote' }
+    post:
+      summary: Criar um novo lote
+      tags: [Lotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ervaAromatica, planoId, quantidadeInicial]
+              properties:
+                ervaAromatica: { type: string, example: "Hortelã" }
+                planoId: { type: string, example: "PLN-001" }
+                quantidadeInicial: { type: integer, example: 500 }
+      responses:
+        '201': { description: "Lote criado" }
+
+  /api/lotes/{id}/dividir:
+    post:
+      summary: Dividir um lote
+      tags: [Lotes]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantidadeSeparar]
+              properties:
+                quantidadeSeparar: { type: integer, example: 100 }
+      responses:
+        '200': { description: "Lote dividido com sucesso" }
+
+  /api/lotes/{id}/perdas:
+    post:
+      summary: Registar perdas num Lote
+      tags: [Lotes]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantidadePerdida, motivo]
+              properties:
+                quantidadePerdida: { type: integer, example: 50 }
+                motivo: { type: string, example: "Praga" }
+      responses:
+        '200': { description: "Perda registada" }
+
+  # ==========================================
+  # 4. TAREFAS OPERACIONAIS
+  # ==========================================
+  /api/tarefas:
+    get:
+      summary: Listar tarefas (pendentes e histórico)
+      tags: [Tarefas]
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Tarefa' }
+    post:
+      summary: Registar nova tarefa
+      tags: [Tarefas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tipo, loteId, responsavel]
+              properties:
+                tipo: { type: string, enum: [Rega, Fertilização, Colheita, Monitorização] }
+                loteId: { type: string, example: "L-001" }
+                responsavel: { type: string, example: "Maria Silva" }
+                prazoLimite: { type: string, format: date-time }
+      responses:
+        '201': { description: "Tarefa criada" }
+
+  /api/tarefas/{id}/executar:
+    patch:
+      summary: Marcar tarefa como executada
+      tags: [Tarefas]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: "Tarefa executada" }
+
+  # ==========================================
+  # 5. ALERTAS
+  # ==========================================
+  /api/alertas:
+    get:
+      summary: Listar todos os alertas
+      tags: [Alertas]
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Alerta' }
+
+  /api/alertas/{id}/resolver:
+    patch:
+      summary: Resolver um alerta
+      tags: [Alertas]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: "Alerta resolvido" }
+
+  /api/alertas/{id}/ignorar:
+    patch:
+      summary: Ignorar um alerta (Exige justificação!)
+      tags: [Alertas]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [justificacao]
+              properties:
+                justificacao: { type: string, example: "Sensor avariado, leitura falsa." }
+      responses:
+        '200': { description: "Alerta ignorado" }
+        '400': { description: "Justificação é obrigatória" }
+
+
+# ==========================================
+  # 6. PLANTAS (Catálogo)
+# ==========================================
+/api/plantas:
+    get:
+      summary: Listar todas as plantas (ervas aromáticas)
+      tags: [Plantas]
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Planta' }
+    post:
+      summary: Registar uma nova planta manualmente
+      tags: [Plantas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome]
+              properties:
+                nome: { type: string, example: "Manjericão" }
+                especie: { type: string, example: "Ocimum basilicum" }
+                tempMinima: { type: number, example: 15 }
+                tempMaxima: { type: number, example: 28 }
+                humidadeMinima: { type: number, example: 50 }
+                humidadeMaxima: { type: number, example: 70 }
+                cicloDeVida: { type: number, example: 60 }
+                intervaloRega: { type: number, example: 2 }
+      responses:
+        '201': { description: "Planta registada com sucesso" }
+
+
+/api/plantas/importar:
+    post:
+      summary: Importar plantas através de ficheiro CSV
+      tags: [Plantas]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                ficheiro:
+                  type: string
+                  format: binary
+                  description: O ficheiro CSV com a lista de ervas aromáticas
+      responses:
+        '201': { description: "Ficheiro CSV importado e plantas guardadas com sucesso" }
+        '400': { description: "Ficheiro inválido ou em falta" }
+
+# ==========================================
+# COMPONENTES GLOBAIS (Esquemas de Dados)
+# ==========================================
+components:
+  schemas:
+    Plano:
+      type: object
+      properties:
+        id: { type: string, example: "PLN-001" }
+        nome: { type: string }
+        ervaAromatica: { type: string }
+        tipo: { type: string, enum: [Regular, Emergência, Pontual] }
+        automacao: { type: string, enum: [Manual, Automático] }
+        estadoAutorizacao: { type: string, enum: [Aprovado, Pendente, Rejeitado] }
+        regrasAutomacao: { type: string }
+    
+    Lote:
+      type: object
+      properties:
+        id: { type: string, example: "L-001" }
+        ervaAromatica: { type: string }
+        planoId: { type: string }
+        estado: { type: string, enum: [Ativo, Comprometido, Concluído] }
+        quantidadeInicial: { type: integer }
+        quantidadeAtual: { type: integer }
+        dataInicio: { type: string, format: date }
+        dataFim: { type: string, format: date, nullable: true }
+
+    Tarefa:
+      type: object
+      properties:
+        id: { type: string, example: "TAR-001" }
+        tipo: { type: string, enum: [Rega, Fertilização, Colheita, Monitorização] }
+        loteId: { type: string }
+        estado: { type: string, enum: [Pendente, Executada, Atrasada] }
+        responsavel: { type: string }
+        prazoLimite: { type: string, format: date-time }
+        dataExecucao: { type: string, format: date-time, nullable: true }
+
+    Alerta:
+      type: object
+      properties:
+        id: { type: string, example: "ALT-001" }
+        loteId: { type: string }
+        gravidade: { type: string, enum: [Informativo, Aviso, Crítico] }
+        descricao: { type: string }
+        estado: { type: string, enum: [Ativo, Resolvido, Ignorado] }
+        justificacao: { type: string, nullable: true }
+        dataCriacao: { type: string, format: date-time }
+
+      
+    Planta:
+      type: object
+      properties:
+        id: { type: string, example: "PLNT-001" }
+        nome: { type: string, example: "Hortelã" }
+        especie: { type: string, example: "Mentha spicata" }
+        tempMinima: { type: number, example: 10 }
+        tempMaxima: { type: number, example: 25 }
+        humidadeMinima: { type: number, example: 60 }
+        humidadeMaxima: { type: number, example: 80 }
+        cicloDeVida: { type: number, example: 90 }
+        intervaloRega: { type: number, example: 3 }
