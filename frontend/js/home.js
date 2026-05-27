@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/frontend/views/login.html';
     });
 
+    
+    const setBtn = document.getElementById('set-btn');
+    setBtn.style.display = (utilizador.cargo === 'Administrador') ? '' : 'none';
+    
+    if (!document.getElementById('btnImportarCSV')) return;
+
     const ficheiroCSV = document.getElementById('ficheiroCSV');
     if (ficheiroCSV) {
         ficheiroCSV.addEventListener('change', () => {
@@ -64,7 +70,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
 
     const headers = { 'Authorization': `Bearer ${token}` };
 

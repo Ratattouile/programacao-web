@@ -16,8 +16,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     const { dados: alertas } = await resposta.json();
+    if (!alertas) return;
 
     const pendentes = alertas.filter(a => a.estado === 'Pendente');
+
+    const alertDot = document.querySelector('.alert-dot');
+    if (alertDot) alertDot.style.display = pendentes.length > 0 ? 'block' : 'none';
+
+    if (!document.getElementById('tabelaAlertas')) return;
 
     document.getElementById('contCriticos').textContent = pendentes.filter(a => a.gravidade === 'Crítico').length;
     document.getElementById('contAvisos').textContent = pendentes.filter(a => a.gravidade === 'Aviso').length;

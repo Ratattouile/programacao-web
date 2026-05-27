@@ -52,3 +52,40 @@ exports.login = async (req, res) => {
         return res.status(500).json({ sucesso: false, erro: err.message });
     }
 };
+
+exports.listarUtilizadores = async (req, res) => {
+    try {
+        const utilizadores = await Utilizador.find({}, 'password').sort({ dataRegisto: -1 });
+        return res.status(200).json({ sucesso: true, dados: utilizadores });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
+
+exports.alterarCargo = async (req, res) => {
+    const { cargo } = req.body;
+    const cargosValidos = ['Administrador', 'Técnico', 'Responsavel Tecnico'];
+    if (!cargo || !cargosValidos.includes(cargo)) {
+        return res.status(400).json({ sucesso: false, erro: "Cargo inválido." });
+    }
+    try {
+        const utilizador = await Utilizador.findByIdAndUpdate(req.params.id, { cargo }, { new: true, select: '-password' });
+        if (!utilizador) return res.status(404).json({ sucesso: false, erro: "Utilizador não encontrado." });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+}
+
+exports.eliminarUtilizador = async (req, res) => {
+    if(req.user.id === req.params.id){
+        return res.status(400).json({ sucesso: false, erro: "Não podes eliminar a tua própria conta." });
+    }
+
+    try{
+        const utilizador = await Utilizador.findByIdAndUpdate(req.params.id);
+        if(!utilizador) return res.status(404).json({ sucesso: false, erro: "Utilizador não econtrado" });
+        return res.status(200).json({ sucesso: true, mensagem: "Utilizador eliminado com sucesso." });
+    }catch(err){
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+} 

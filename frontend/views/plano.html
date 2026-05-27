@@ -7,8 +7,10 @@
     <title>Planos de Cultivo - GREENHERB</title>
     <link rel="stylesheet" href="/frontend/css/style.css">
     <script defer src="/frontend/js/planos.js"></script>
+    <script defer src="/frontend/js/home.js"></script>
+    <script defer src="/frontend/js/alertas.js"></script>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications,settings" />
 </head>
 
 <body class="app-layout">
@@ -33,7 +35,13 @@
             <button class="alert-btn" aria-label="Alertas"
                 onclick="window.location.href='/frontend/views/alertas.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
-                <div class="alert-dot"></div>
+                <div class="alert-dot" id="alertDot"></div>
+                <span class="tooltip">Alertas</span>
+            </button>
+            <button class="settings-btn" aria-label="Gerir Utilizadores" id="set-btn"
+                onclick="window.location.href='/frontend/views/alertas.html'">
+                <span class="material-symbols-outlined" style="font-size:18px">settings</span>
+                <span class="tooltip">Gerir Utilizadores</span>
             </button>
             <div class="nav-avatar">JG</div>
             <span id="userDisplay">Bem-vindo</span>

@@ -96,7 +96,9 @@ button {
     border: 0.5px solid rgba(73, 187, 120, 0.3);
 }
 
-.btn-action.green:hover { background: rgba(73, 187, 120, 0.2); }
+.btn-action.green:hover {
+    background: rgba(73, 187, 120, 0.2);
+}
 
 .btn-action.red {
     background: rgba(211, 47, 47, 0.1);
@@ -104,7 +106,9 @@ button {
     border: 0.5px solid rgba(211, 47, 47, 0.3);
 }
 
-.btn-action.red:hover { background: rgba(211, 47, 47, 0.2); }
+.btn-action.red:hover {
+    background: rgba(211, 47, 47, 0.2);
+}
 
 .btn-action.ghost {
     background: transparent;
@@ -123,7 +127,9 @@ button {
     border: 0.5px solid rgba(56, 161, 221, 0.25);
 }
 
-.btn-action.blue:hover { background: rgba(56, 161, 221, 0.2); }
+.btn-action.blue:hover {
+    background: rgba(56, 161, 221, 0.2);
+}
 
 .actions-group {
     display: flex;
@@ -396,16 +402,44 @@ button {
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: rgba(237, 108, 2, 0.1);
-    border: 0.5px solid rgba(237, 108, 2, 0.25);
+    background: rgba(237, 155, 2, 0);
+    border: 0.5px solid rgba(237, 108, 2, 0.486);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    color: #ed9b5a;
+    color: #ed9c5a;
     padding: 0;
     flex-shrink: 0;
+    transition: 0.2s;
+}
+
+.alert-btn:hover {
+    background: rgba(237, 108, 2, 0.1);
+    transition: 0.2s;
+}
+
+.settings-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(2, 237, 41, 0);
+    border: 0.5px solid rgba(2, 237, 33, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    color: #42c549;
+    padding: 0;
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+
+.settings-btn:hover {
+    background: rgba(2, 237, 41, 0.1);
+    transition: 0.2s;
 }
 
 .alert-dot {
@@ -417,6 +451,7 @@ button {
     border-radius: 50%;
     background: #ed6c02;
     border: 1.5px solid #111e16;
+    display: none;
 }
 
 .logout-btn {
@@ -441,7 +476,7 @@ button {
     color: var(--danger-color);
 }
 
-.logout-btn .tooltip {
+.tooltip{
     position: absolute;
     bottom: -30px;
     right: 0;
@@ -458,7 +493,11 @@ button {
     z-index: 10;
 }
 
-.logout-btn:hover .tooltip { opacity: 1; }
+.logout-btn:hover .tooltip, 
+.alert-btn:hover .tooltip, 
+.settings-btn:hover .tooltip{
+    opacity: 1;
+}
 
 
 /* Main Content */
@@ -508,9 +547,19 @@ button {
 }
 
 @keyframes pulse {
-  0% { transform: scale(0); opacity: 1; }
-  75%{opacity: 0.4;}
-  100% { transform: scale(1.2); opacity: 0; }
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
 }
 
 .content-area {
@@ -545,7 +594,9 @@ button {
 .card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(94, 204, 138, 0.25), rgba(201, 168, 76, 0.1), transparent);
     pointer-events: none;
@@ -587,7 +638,9 @@ button {
     text-shadow: 0 0 20px rgba(94, 204, 138, 0.2);
 }
 
-.card-value.warning { color: var(--warning-color); }
+.card-value.warning {
+    color: var(--warning-color);
+}
 
 .card.mt-2 {
     margin-top: 0;
@@ -631,7 +684,9 @@ button {
     transition: color 0.15s;
 }
 
-.table-action:hover { color: #c9a84c; }
+.table-action:hover {
+    color: #c9a84c;
+}
 
 /* Tabelas */
 .data-table {
@@ -657,7 +712,9 @@ button {
     border-bottom: 0.5px solid rgba(94, 204, 138, 0.06);
 }
 
-.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
 
 .data-table tbody tr:hover td {
     background: rgba(94, 204, 138, 0.05);
@@ -729,14 +786,27 @@ button {
 .metric-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 2px;
 }
 
-.metric-card.default::before { background: linear-gradient(90deg, rgba(94, 204, 138, 0.6), rgba(94, 204, 138, 0.15)); }
-.metric-card.danger::before  { background: linear-gradient(90deg, rgba(211, 47, 47, 0.7), rgba(211, 47, 47, 0.15)); }
-.metric-card.warn::before    { background: linear-gradient(90deg, rgba(237, 108, 2, 0.6), rgba(237, 108, 2, 0.15)); }
-.metric-card.info::before    { background: linear-gradient(90deg, rgba(56, 161, 221, 0.6), rgba(56, 161, 221, 0.15)); }
+.metric-card.default::before {
+    background: linear-gradient(90deg, rgba(94, 204, 138, 0.6), rgba(94, 204, 138, 0.15));
+}
+
+.metric-card.danger::before {
+    background: linear-gradient(90deg, rgba(211, 47, 47, 0.7), rgba(211, 47, 47, 0.15));
+}
+
+.metric-card.warn::before {
+    background: linear-gradient(90deg, rgba(237, 108, 2, 0.6), rgba(237, 108, 2, 0.15));
+}
+
+.metric-card.info::before {
+    background: linear-gradient(90deg, rgba(56, 161, 221, 0.6), rgba(56, 161, 221, 0.15));
+}
 
 .metric-card h3 {
     font-size: 11px;
@@ -754,10 +824,21 @@ button {
     line-height: 1;
 }
 
-.metric-card.danger .card-value { color: #e57373; }
-.metric-card.warn .card-value   { color: #ed6c02; }
-.metric-card.info .card-value   { color: #6abfe8; }
-.metric-card.default .card-value { color: #e4f5ec; }
+.metric-card.danger .card-value {
+    color: #e57373;
+}
+
+.metric-card.warn .card-value {
+    color: #ed6c02;
+}
+
+.metric-card.info .card-value {
+    color: #6abfe8;
+}
+
+.metric-card.default .card-value {
+    color: #e4f5ec;
+}
 
 .section-title-row {
     display: flex;
@@ -787,7 +868,9 @@ button {
     font-family: 'DM Sans', sans-serif;
 }
 
-.justif-input:focus { border-color: rgba(201, 168, 76, 0.4); }
+.justif-input:focus {
+    border-color: rgba(201, 168, 76, 0.4);
+}
 
 .justif-input::placeholder {
     color: rgba(255, 255, 255, 0.2);
@@ -824,7 +907,9 @@ button {
         scrollbar-width: none;
     }
 
-    .navbar-nav::-webkit-scrollbar { display: none; }
+    .navbar-nav::-webkit-scrollbar {
+        display: none;
+    }
 
     .navbar-nav ul {
         flex-wrap: nowrap;
@@ -918,17 +1003,19 @@ button {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 999;
 }
- 
+
 .modal {
-    background: linear-gradient(160deg, #162516 0%, #0c140c 100%);
-    border: 1px solid rgba(201, 168, 76, 0.18);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    background: linear-gradient(160deg, #1c3222 0%, #111d14 100%);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(94, 204, 138, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     border-radius: 14px;
     width: 420px;
     max-width: 95vw;
@@ -938,46 +1025,48 @@ button {
     padding: 0;
     gap: 0;
 }
- 
+
 .modal-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     padding: 24px 24px 20px;
 }
- 
+
 .modal-title-group {
     display: flex;
     align-items: flex-start;
     gap: 12px;
 }
- 
+
 .modal-icon {
     width: 32px;
     height: 32px;
     min-width: 32px;
     border-radius: 8px;
-    background: #2a2010;
+    background: linear-gradient(135deg, #3d3010, #251e08);
+    border: 0.5px solid rgba(201, 168, 76, 0.25);
+    box-shadow: 0 2px 8px rgba(201, 168, 76, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 2px;
 }
- 
+
 .modal h2 {
     color: #e8f5e8;
     font-size: 17px;
     font-weight: 500;
     margin: 0 0 4px;
 }
- 
+
 .modal-subtitle {
     font-size: 12px;
     color: rgba(201, 168, 76, 0.5);
     margin: 0;
     line-height: 1.5;
 }
- 
+
 .btn-close {
     width: 28px;
     height: 28px;
@@ -991,71 +1080,79 @@ button {
     flex-shrink: 0;
     transition: background 0.15s;
 }
- 
+
 .btn-close:hover {
     background: #1e1e14;
 }
- 
+
 .modal-divider {
     height: 1px;
-    background: #1c1f1c;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
     margin: 0 24px;
 }
- 
+
 .modal form {
     padding: 20px 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
- 
+
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
- 
+
 .form-group label {
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgba(201, 168, 76, 0.6);
 }
- 
+
 .form-group input,
 .form-group select {
-    background: #0d120d;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 14px;
-    color: #c8e6c8;
+    color: #dff0df;
     outline: none;
     width: 100%;
     box-sizing: border-box;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     appearance: none;
     -webkit-appearance: none;
 }
- 
-.form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+
+.form-group input:hover,
+.form-group select:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
 }
- 
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
 .form-group input:focus,
 .form-group select:focus {
-    border-color: rgba(201, 168, 76, 0.45);
+    border-color: rgba(201, 168, 76, 0.55);
+    background: rgba(201, 168, 76, 0.05);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
 }
- 
+
 .select-wrapper {
     position: relative;
 }
- 
+
 .select-wrapper select {
     padding-right: 36px;
     cursor: pointer;
 }
- 
+
 .select-chevron {
     position: absolute;
     right: 12px;
@@ -1063,15 +1160,15 @@ button {
     transform: translateY(-50%);
     pointer-events: none;
 }
- 
+
 .input-wrapper {
     position: relative;
 }
- 
+
 .input-wrapper input {
     padding-right: 44px;
 }
- 
+
 .input-suffix {
     position: absolute;
     right: 14px;
@@ -1081,13 +1178,13 @@ button {
     color: rgba(201, 168, 76, 0.4);
     pointer-events: none;
 }
- 
+
 .modal .actions-group {
     display: flex;
     gap: 10px;
     margin-top: 4px;
 }
- 
+
 .btn-action.ghost {
     flex: 1;
     padding: 11px;
@@ -1105,7 +1202,7 @@ button {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.2);
 }
- 
+
 .btn-terceario {
     flex: 2;
     padding: 11px;
