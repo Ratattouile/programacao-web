@@ -8,7 +8,7 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 router.get('/utilizadores', authMiddleware, verificarCargo('Administrador'), authController.listarUtilizadores);
-router.post('/utilizadores', authMiddleware, verificarCargo('Administrador'), authController.criarUtilizador);
+router.post('/utilizadores', authMiddleware, verificarCargo('Administrador'), authController.register);
 router.patch('/utilizadores/:id/cargo', authMiddleware, verificarCargo('Administrador'), authController.alterarCargo);
 router.delete('/utilizadores/:id', authMiddleware, verificarCargo('Administrador'), authController.eliminarUtilizador);
 
