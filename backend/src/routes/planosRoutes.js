@@ -9,7 +9,7 @@ router.get('/', authMiddleware, planosController.listarPlanos)
 
 router.post('/', authMiddleware, verificarCargo('Responsavel Tecnico', 'Administrador'), planosController.criarPlanos)
 
-router.patch('/:id/autorizar', verificarCargo('Responsavel Tecnico', 'Administrador'), authMiddleware, planosController.autorizarPlano)
+router.patch('/:id/autorizar', authMiddleware, verificarCargo('Responsavel Tecnico', 'Administrador'), planosController.autorizarPlano)
 
 module.exports = router
 

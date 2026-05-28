@@ -75,3 +75,26 @@ exports.perdasLote = async (req, res) => {
         return res.status(500).json({ sucesso: false, erro: err.message });
     }
 };
+
+
+exports.exportarCSV = async (req, res) => {
+    try {
+        const lotes = await Lote.find().populate('planoId', 'nome');
+        
+        let csv = 'ID Lote,Erva Aromatica,Plano,Quantidade Inicial,Quantidade Atual,Estado,Data Inicio\n';
+        
+        lotes.forEach(lote => {
+            const planoNome = lote.planoId ? lote.planoId.nome : 'Sem plano';
+            const data = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
+            
+            csv += `${lote._id},${lote.ervaAromatica},${planoNome},${lote.quantidadeInicial},${lote.quantidadeAtual},${lote.estado},${data}\n`;
+        });
+
+        res.header('Content-Type', 'text/csv; charset=utf-8');
+        res.attachment('relatorio_lotes.csv');
+        return res.send(csv);
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+};
+

@@ -2,7 +2,7 @@ const Plano = require('../models/Plano');
 
 exports.listarPlanos = async (req, res) => {
     try {
-        const planos = await Plano.find();
+        const planos = await Plano.find().sort({dataCriacao:-1}); //mais recentes primeiro
         return res.status(200).json({ sucesso: true, dados: planos });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -10,17 +10,18 @@ exports.listarPlanos = async (req, res) => {
 };
 
 exports.criarPlanos = async (req, res) => {
-    const { nome, ervaAromatica, tipo, automacao, regrasAutomacao, tarefa } = req.body;
-
-    if (!nome || !ervaAromatica || !tipo || !automacao || !tarefa) {
-        return res.status(400).json({ sucesso: false, erro: "Faltam campos obrigatorios" });
-    }
-
     try {
-        const estadoAutorizacao = tipo === "Pontual" ? "Pendente" : "Aprovado";
-        const novoPlano = await Plano.create({ nome, ervaAromatica, tipo, automacao, regrasAutomacao, estadoAutorizacao, tarefa });
+        const dadosPlano = req.body;
+
+        dadosPlano.estadoAutorizacao = dadosPlano.tipo === "Pontual" ? "Pendente" : "Aprovado";
+
+        const novoPlano = await Plano.create(dadosPlano);
+        
         return res.status(201).json({ sucesso: true, mensagem: "Plano criado com sucesso", dados: novoPlano });
     } catch (err) {
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ sucesso: false, erro: "Faltam campos obrigatórios para este tipo de plano específico." });
+        }
         return res.status(500).json({ sucesso: false, erro: err.message });
     }
 };

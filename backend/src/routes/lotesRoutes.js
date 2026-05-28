@@ -6,13 +6,12 @@ const verificarCargo = require('../middleware/verificarCargo');
 
 
 router.get('/', authMiddleware, lotesController.listarLotes)
-
+router.get('/exportar', authMiddleware, lotesController.exportarCSV);
 router.post('/', authMiddleware, verificarCargo('Responsavel Tecnico', 'Administrador'), lotesController.criarLotes)
 
 router.post('/:id/dividir', authMiddleware, verificarCargo('Responsavel Tecnico', 'Administrador'), lotesController.dividirLote)
 
 router.post('/:id/perdas', authMiddleware, verificarCargo('Técnico', 'Responsavel Tecnico', 'Administrador'), lotesController.perdasLote)
-
 module.exports = router
 
 
