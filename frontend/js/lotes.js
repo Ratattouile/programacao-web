@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tbody = document.getElementById('tabelaLotes');
     tbody.innerHTML = '';
 
-    dados.dados.forEach(lote => {
+    dados.dados.forEach((lote, index) => {
         let corBadge = 'active';
         if (lote.estado === 'Comprometido') corBadge = 'warning';
         if (lote.estado === 'Concluído') corBadge = 'concluded';
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
 
         const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
             <td class="lot-id">${lote._id.substring(lote._id.length - 6).toUpperCase()}</td>
             <td>${lote.ervaAromatica}</td>

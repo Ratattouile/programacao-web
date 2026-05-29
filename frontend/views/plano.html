@@ -13,20 +13,29 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout,notifications,settings" />
 </head>
 
-<body class="app-layout">
+<div id="loadingBar"></div>
+<script src="/frontend/js/ambient.js"></script>
 
+<div id="navBackdrop" class="nav-backdrop"></div>
+
+<body class="app-layout">
     <header class="top-navbar">
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
-
+        
         <nav class="navbar-nav">
             <ul>
                 <li><a href="/frontend/views/home.html">Visão Geral</a></li>
                 <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
                 <li><a href="/frontend/views/plano.html" class="active">Planos de Cultivo</a></li>
                 <li><a href="/frontend/views/tarefas.html">Tarefas</a></li>
-                <!--<li><a href="/frontend/views/alertas.html">Alertas</a></li>-->
                 <li><a href="/frontend/views/plantas.html">Plantas</a></li>
             </ul>
         </nav>
@@ -39,11 +48,11 @@
                 <span class="tooltip">Alertas</span>
             </button>
             <button class="settings-btn" aria-label="Gerir Utilizadores" id="set-btn"
-                onclick="window.location.href='/frontend/views/alertas.html'">
+                onclick="window.location.href='/frontend/views/utilizadores.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">settings</span>
                 <span class="tooltip">Gerir Utilizadores</span>
             </button>
-            <div class="nav-avatar">JG</div>
+            <div class="nav-avatar" id="navAvatar">JG</div>
             <span id="userDisplay">Bem-vindo</span>
             <button id="logoutBtn" class="logout-btn">
                 <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>

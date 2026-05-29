@@ -25,15 +25,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!document.getElementById('tabelaAlertas')) return;
 
-    document.getElementById('contCriticos').textContent = pendentes.filter(a => a.gravidade === 'Crítico').length;
-    document.getElementById('contAvisos').textContent = pendentes.filter(a => a.gravidade === 'Aviso').length;
-    document.getElementById('contInformativos').textContent = pendentes.filter(a => a.gravidade === 'Informativo').length;
+    //document.getElementById('contCriticos').textContent = pendentes.filter(a => a.gravidade === 'Crítico').length;
+    //document.getElementById('contAvisos').textContent = pendentes.filter(a => a.gravidade === 'Aviso').length;
+    //document.getElementById('contInformativos').textContent = pendentes.filter(a => a.gravidade === 'Informativo').length;
+    animarContador(document.getElementById('contCriticos'), pendentes.filter(a => a.gravidade === 'Crítico').length);
+    animarContador(document.getElementById('contAvisos'), pendentes.filter(a => a.gravidade === 'Aviso').length);
+    animarContador(document.getElementById('contInformativos'), pendentes.filter(a => a.gravidade === 'Informativo').length);
 
     const tbody = document.getElementById('tabelaAlertas');
     tbody.innerHTML = '';
-    pendentes.forEach(a => {
+    pendentes.forEach((a, index) => {
         const data = new Date(a.dataCriacao).toLocaleString('pt-PT');
         const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
             <td>${data}</td>
             <td class="lot-id">${a.loteId?.ervaAromatica || a.loteId}</td>

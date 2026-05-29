@@ -44,12 +44,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('contPlanosRegulares').textContent = regulares;
     document.getElementById('contPlanosPontuais').textContent = pontuais;
     document.getElementById('contPlanosEmergencias').textContent = emergencias;
+    animarContador(document.getElementById('contPlanosRegulares'), regulares);
+    animarContador(document.getElementById('contPlanosPontuais'), pontuais);
+    animarContador(document.getElementById('contPlanosEmergencias'), emergencias);
 
     const tbody = document.getElementById('tabelaPlanos');
     tbody.innerHTML = '';
 
     dados.dados.forEach(plano => {
        let corBadge = 'active';
+    dados.dados.forEach((plano, index) => {
+        let corBadge = 'active';
         if (plano.tipo === 'Pontual') corBadge = 'concluded';
         if (plano.tipo === 'Emergencia') corBadge = 'warning';
 
@@ -65,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let corEstado = plano.estadoAutorizacao === 'Aprovado' ? 'color: #a8e6a8;' : 'color: #ffcc00;';
 
         const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
             <td>${plano.nome}</td>
             <td>${plano.ervaAromatica}</td>

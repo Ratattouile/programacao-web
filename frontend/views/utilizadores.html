@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilizadores - GREENHERB</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <script defer src="/frontend/js/utilizadores.js"></script>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,delete,edit,logout,manage_accounts,notifications,person,settings" />
+</head>
+
+<div id="loadingBar"></div>
+<script src="/frontend/js/ambient.js"></script>
+
+<body class="app-layout">
+    <header class="top-navbar">
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="navbar-brand">
+            <h2>🌱 GREENHERB</h2>
+        </div>
+
+        <nav class="navbar-nav">
+            <ul>
+                <li><a href="/frontend/views/home.html">Visão Geral</a></li>
+                <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
+                <li><a href="/frontend/views/plano.html">Planos de Cultivo</a></li>
+                <li><a href="/frontend/views/tarefas.html">Tarefas</a></li>
+                <li><a href="/frontend/views/plantas.html">Plantas</a></li>
+            </ul>
+        </nav>
+        <div class="navbar-user">
+            <button class="alert-btn" aria-label="Alertas"
+                onclick="window.location.href='/frontend/views/alertas.html'">
+                <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
+                <div class="alert-dot"></div>
+            </button>
+            <button id="settingsBtn" class="settings-btn"
+                onclick="window.location.href='/frontend/views/utilizadores.html'" style="display:none">
+                <span class="material-symbols-outlined" style="font-size:18px">settings</span>
+                <span class="tooltip">Gestão de Utilizadores</span>
+            </button>
+            <div class="nav-avatar" id="navAvatar">JG</div>
+            <span id="userDisplay">Bem-vindo</span>
+            <button id="logoutBtn" class="logout-btn">
+                <span class="material-symbols-outlined" style="font-size:18px">logout</span>
+                <span class="tooltip">Terminar sessão</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Gestão de Utilizadores</h1>
+            <button id="btnNovoUtilizador" class="btn-secondary">+ Novo Utilizador</button>
+        </header>
+
+        <section class="content-area">
+            <div class="cards-grid" style="margin-bottom:1rem">
+                <div class="metric-card default">
+                    <h3>Total</h3>
+                    <p class="card-value" id="statTotal">-</p>
+                </div>
+                <div class="metric-card default">
+                    <h3>Administradores</h3>
+                    <p class="card-value" id="statAdmins">-</p>
+                </div>
+                <div class="metric-card default">
+                    <h3>Técnicos</h3>
+                    <p class="card-value" id="statTecnicos">-</p>
+                </div>
+                <div class="metric-card default">
+                    <h3>Resp. Técnicos</h3>
+                    <p class="card-value" id="statResp">-</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="section-title-row">
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px;color:rgba(94,204,138,0.5)">manage_accounts</span>
+                    <h2>Utilizadores</h2>
+                    <span class="table-count" id="contUtilizadores">0</span>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Username</th>
+                            <th>Cargo</th>
+                            <th>Data de Registo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaUtilizadores"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="modalNovoUtilizador" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon">
+                        <span class="material-symbols-outlined" style="font-size:16px;color:#c9a84c">add</span>
+                    </div>
+                    <div>
+                        <h2>Novo Utilizador</h2>
+                        <p class="modal-subtitle">Criar uma nova conta de acesso ao sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-divider"></div>
+            <form id="formNovoUtilizador">
+                <div class="form-group">
+                    <label for="uNome">Nome</label>
+                    <input type="text" id="uNome" placeholder="Nome completo" required />
+                </div>
+                <div class="form-group">
+                    <label for="uUsername">Username</label>
+                    <input type="text" id="uUsername" placeholder="nome.apelido" required />
+                </div>
+                <div class="form-group">
+                    <label for="uPassword">Password</label>
+                    <input type="password" id="uPassword" placeholder="••••••••" required />
+                </div>
+                <div class="form-group">
+                    <label for="uCargo">Cargo</label>
+                    <div class="select-wrapper">
+                        <select id="uCargo" required>
+                            <option value="Técnico" selected>Técnico</option>
+                            <option value="Responsavel Tecnico">Responsável Técnico</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-divider"></div>
+                <div class="actions-group">
+                    <button type="button" id="btnCancelarNovoUtilizador" class="btn-action ghost">Cancelar</button>
+                    <button type="submit" class="btn-terceario">Criar Utilizador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEditarCargo" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon">
+                        <span class="material-symbols-outlined" style="font-size:16px;color:#c9a84c">edit</span>
+                    </div>
+                    <div>
+                        <h2>Alterar Cargo</h2>
+                        <p class="modal-subtitle" id="editCargoSubtitle">Utilizador</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-divider"></div>
+            <form id="formEditarCargo">
+                <input type="hidden" id="editCargoId" />
+                <div class="form-group">
+                    <label for="editCargo">Novo Cargo</label>
+                    <div class="select-wrapper">
+                        <select id="editCargo" required>
+                            <option value="Técnico">Técnico</option>
+                            <option value="Responsavel Tecnico">Responsável Técnico</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-divider"></div>
+                <div class="actions-group">
+                    <button type="button" id="btnCancelarEditarCargo" class="btn-action ghost">Cancelar</button>
+                    <button type="submit" class="btn-terceario">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEliminar" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon" style="background:rgba(226,75,74,0.15);border-color:rgba(226,75,74,0.3)">
+                        <span class="material-symbols-outlined" style="font-size:16px;color:#e24b4a">delete</span>
+                    </div>
+                    <div>
+                        <h2 style="color:#e24b4a">Eliminar Utilizador</h2>
+                        <p class="modal-subtitle">Esta ação não pode ser desfeita.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-divider"></div>
+            <p style="color:rgba(255,255,255,0.6);font-size:0.9rem;padding:0.5rem 0">
+                Tens a certeza que queres eliminar <strong id="eliminarNome" style="color:#fff"></strong>?
+            </p>
+            <div class="modal-divider"></div>
+            <div class="actions-group">
+                <button type="button" id="btnCancelarEliminar" class="btn-action ghost">Cancelar</button>
+                <button type="button" id="btnConfirmarEliminar" class="btn-action"
+                    style="background:rgba(226,75,74,0.15);color:#e24b4a;border-color:rgba(226,75,74,0.3)">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
