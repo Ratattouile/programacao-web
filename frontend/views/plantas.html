@@ -62,10 +62,28 @@
         </div>
     </header>
     <main class="main-content">
-        <header class="topbar">
-            <h1>Plantas</h1>
-            <button id="btnNovaPlanta" class="btn-secondary" style="width:auto">+ Nova Planta</button>
-        </header>
+    <header class="topbar">
+    <h1>Plantas</h1>
+    
+    <div class="topbar-actions">
+        <button id="btnNovaPlanta" class="btn-secondary">+ Nova Planta</button>
+        
+        <div class="card import-card">
+            <div class="section-title-row">
+                <span class="material-symbols-outlined" style="font-size:16px; color:rgba(94,204,138,0.5)">file_upload</span>
+                <h2>Importar Plantas via CSV</h2>
+            </div>
+            <div class="import-area"> 
+                <input type="file" id="ficheiroCSV" accept=".csv" style="display:none" />
+                <label for="ficheiroCSV" class="file-drop-zone" id="fileDropZone"> 
+                    <span class="material-symbols-outlined" style="font-size:18px">file_upload</span>
+                    <span id="fileLabel">Selecionar ficheiro .csv</span>
+                </label>
+                <button id="btnImportarCSV" class="btn-secondary" style="white-space:nowrap; flex-shrink:0">Importar</button>
+            </div> 
+        </div>
+    </div>
+</header>
 
         <section class="content-area">
             <div class="card mt-2">

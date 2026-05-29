@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
-            <td class="lot-id">${lote._id}</td>
+            <td class="lot-id">${lote._id.substring(lote._id.length - 6).toUpperCase()}</td>
             <td>${lote.ervaAromatica}</td>
             <td>${lote.planoId?.nome || '-'}</td>
             <td>${lote.quantidadeAtual}</td>
@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td>
                 <div class="actions-group">
                     <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
+                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
                 </div>
             </td>
         `;
@@ -73,7 +74,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modal = document.getElementById('modalNovoLote');
     const btnFechar = document.getElementById('btnFecharModal');
 
-    // abrir modal e carregar planos no select
     btnNovoLote.addEventListener('click', async () => {
         const resposta = await fetch('http://localhost:5000/api/planos', {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         select.innerHTML = '';
         dados.dados.forEach(p => {
             select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
+            
         });
         modal.style.display = 'flex';
     });
@@ -133,3 +134,110 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+
+const modalSensores = document.getElementById('modalSensores');
+const btnFecharSensores = document.getElementById('btnFecharModalSensores');
+const tabelaHistorico = document.getElementById('tabelaHistoricoMedicoes');
+
+if (btnFecharSensores) {
+    btnFecharSensores.addEventListener('click', () => modalSensores.style.display = 'none');
+}
+
+async function abrirModalSensores(loteId, ervaAromatica) {
+    document.getElementById('sensorLoteId').value = loteId;
+    document.getElementById('sensoresLoteNome').textContent = `Lote de ${ervaAromatica}`;
+    
+    tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">A carregar dados...</td></tr>';
+    modalSensores.style.display = 'flex';
+
+    try {
+        const token = sessionStorage.getItem('token');
+        const resposta = await fetch('http://localhost:5000/api/medicoes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+            const medicoesDesteLote = dados.dados.filter(m => m.loteId && m.loteId._id === loteId);
+            
+            tabelaHistorico.innerHTML = ''; 
+
+            if (medicoesDesteLote.length === 0) {
+                tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sem medições registadas.</td></tr>';
+            } else {
+                medicoesDesteLote.forEach(medicao => {
+                    const dataFormatada = new Date(medicao.dataRegisto).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${dataFormatada}</td>
+                        <td>${medicao.temperatura} ºC</td>
+                        <td>${medicao.humidade} %</td>
+                        <td>${medicao.luminosidade} lx</td>
+                        
+                    `;
+                    tabelaHistorico.appendChild(tr);
+                });
+            }
+        }
+    } catch (err) {
+        tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center; color: #ff6b6b;">Erro ao carregar histórico.</td></tr>';
+    }
+}
+
+document.getElementById('formSimularMedicao').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const token = sessionStorage.getItem('token');
+    const loteId = document.getElementById('sensorLoteId').value;
+    const temperatura = document.getElementById('simTemp').value;
+    const humidade = document.getElementById('simHum').value;
+    const luminosidade = document.getElementById('simLuz').value;
+
+    try {
+        const resposta = await fetch('http://localhost:5000/api/medicoes', {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ loteId, temperatura, humidade, luminosidade })
+        });
+
+        const dados = await resposta.json();
+        if (dados.sucesso) {
+            document.getElementById('formSimularMedicao').reset();
+            const erva = document.getElementById('sensoresLoteNome').textContent.replace('Lote de ', '');
+            abrirModalSensores(loteId, erva); 
+        } else {
+            alert("Erro ao enviar leitura: " + dados.erro);
+        }
+    } catch (err) {
+        alert("Erro de comunicação com o servidor.");
+    }
+});
+
+const btnExportar = document.getElementById('btnExportarCSV');
+if (btnExportar) {
+    btnExportar.addEventListener('click', async () => {
+        const token = sessionStorage.getItem('token');
+        try {
+            const resposta = await fetch('http://localhost:5000/api/lotes/exportar', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            // Converte a resposta num Ficheiro (Blob)
+            const blob = await resposta.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Relatorio_Lotes_GreenHerb.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (err) {
+            alert("Erro ao exportar ficheiro.");
+        }
+    });
+}

@@ -118,6 +118,26 @@ button {
     flex-wrap: wrap;
 }
 
+.topbar {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; 
+    flex-wrap: wrap;
+}
+
+.topbar-actions .import-card {
+    margin: 0; 
+}
+
 .topbar-action {
     font-size: 13px;
     padding: 7px 14px;
@@ -472,6 +492,28 @@ button {
     background: linear-gradient(160deg, #1c3222 0%, #111d14 100%);
     border: 1px solid rgba(201, 168, 76, 0.2);
     box-shadow: 0 28px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(94, 204, 138, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    width: 420px;
+    max-width: 95vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+    gap: 0;
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 24px 20px;
+}
+
+.modal-title-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
     border-radius: 14px; width: 420px; max-width: 95vw;
     display: flex; flex-direction: column; overflow: hidden; padding: 0; gap: 0;
 }
@@ -480,6 +522,107 @@ button {
 .modal-icon {
     width: 32px; height: 32px; min-width: 32px; border-radius: 8px;
     background: linear-gradient(135deg, #3d3010, #251e08);
+    border: 0.5px solid rgba(201, 168, 76, 0.25);
+    box-shadow: 0 2px 8px rgba(201, 168, 76, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.modal h2 {
+    color: #e8f5e8;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0 0 4px;
+}
+
+.modal-subtitle {
+    font-size: 12px;
+    color: rgba(201, 168, 76, 0.5);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.btn-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+
+.btn-close:hover {
+    background: #1e1e14;
+}
+
+.modal-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+    margin: 0 24px;
+}
+
+.modal form {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.modal select {
+    background-color: #111d14; 
+    color: #e8f5e8;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+
+.modal select option {
+    background-color: #1a2c1e; 
+    color: #e8f5e8; 
+}
+
+.modal input {
+    background-color: #111d14;
+    color: #e8f5e8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* podemos criar uma custom scrollbar para ficar mais bonito o design */
+
+
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(201, 168, 76, 0.6);
+}
+
+.form-group input,
+.form-group select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #dff0df;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
     border: 0.5px solid rgba(201, 168, 76, 0.25); box-shadow: 0 2px 8px rgba(201, 168, 76, 0.1);
     display: flex; align-items: center; justify-content: center; margin-top: 2px;
 }
