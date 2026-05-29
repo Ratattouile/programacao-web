@@ -138,6 +138,26 @@ button {
     flex-wrap: wrap;
 }
 
+.topbar {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; 
+    flex-wrap: wrap;
+}
+
+.topbar-actions .import-card {
+    margin: 0; 
+}
+
 .topbar-action {
     font-size: 13px;
     padding: 7px 14px;
@@ -1019,6 +1039,7 @@ button {
     border-radius: 14px;
     width: 420px;
     max-width: 95vw;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1096,7 +1117,31 @@ button {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow-y: auto;
 }
+
+.modal select {
+    background-color: #111d14; 
+    color: #e8f5e8;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+
+.modal select option {
+    background-color: #1a2c1e; 
+    color: #e8f5e8; 
+}
+
+.modal input {
+    background-color: #111d14;
+    color: #e8f5e8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* podemos criar uma custom scrollbar para ficar mais bonito o design */
+
+
 
 .form-group {
     display: flex;
