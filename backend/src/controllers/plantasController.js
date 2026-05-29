@@ -1,6 +1,8 @@
 const Planta = require('../models/Planta')
 const fs = require('fs')
 const csv = require('csv-parser')
+const { registarLog } = require('../utils/auditoria');
+
 
 
 exports.listarPlantas = async(req,res) => {
@@ -31,6 +33,7 @@ exports.criarPlanta = async (req, res) => {
 
     try {
         const novaPlanta = await Planta.create({ nome, especie, tempMinima, tempMaxima, humidadeMinima, humidadeMaxima, cicloDeVida, intervaloRega });
+        await registarLog(req, 'Criou Planta', `Nome: ${nome} | Espécie: ${especie}`);
         return res.status(201).json({ sucesso: true, mensagem: "Planta criada com sucesso", dados: novaPlanta });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -82,6 +85,7 @@ exports.obterPlanta = async (req, res) => {
 exports.atualizarPlanta = async (req, res) => {
     try {
         const planta = await Planta.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        await registarLog(req, 'Atualizou Planta', `Atualizou a planta: ${planta.nome}`);        
         if (!planta) return res.status(404).json({ sucesso: false, erro: "Planta não encontrada" });
         return res.status(200).json({ sucesso: true, mensagem: "Planta atualizada com sucesso", dados: planta });
     } catch (err) {
@@ -92,6 +96,7 @@ exports.atualizarPlanta = async (req, res) => {
 exports.eliminarPlanta = async (req, res) => {
     try {
         const planta = await Planta.findByIdAndDelete(req.params.id);
+        await registarLog(req, 'Eliminou Planta', `Apagou a planta: ${planta.nome}`);        
         if (!planta) return res.status(404).json({ sucesso: false, erro: "Planta não encontrada" });
         return res.status(200).json({ sucesso: true, mensagem: "Planta eliminada com sucesso" });
     } catch (err) {
