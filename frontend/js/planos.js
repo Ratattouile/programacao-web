@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const token = sessionStorage.getItem('token');
 
-  
+
     const resposta = await fetch('http://localhost:5000/api/planos', {
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -36,23 +36,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-  
+
     const regulares = dados.dados.filter(p => p.tipo === 'Regular').length;
     const pontuais = dados.dados.filter(p => p.tipo === 'Pontual').length;
     const emergencias = dados.dados.filter(p => p.tipo === 'Emergencia').length;
-    
-    document.getElementById('contPlanosRegulares').textContent = regulares;
-    document.getElementById('contPlanosPontuais').textContent = pontuais;
-    document.getElementById('contPlanosEmergencias').textContent = emergencias;
+
     animarContador(document.getElementById('contPlanosRegulares'), regulares);
     animarContador(document.getElementById('contPlanosPontuais'), pontuais);
     animarContador(document.getElementById('contPlanosEmergencias'), emergencias);
 
     const tbody = document.getElementById('tabelaPlanos');
     tbody.innerHTML = '';
-
-    dados.dados.forEach(plano => {
-       let corBadge = 'active';
     dados.dados.forEach((plano, index) => {
         let corBadge = 'active';
         if (plano.tipo === 'Pontual') corBadge = 'concluded';
@@ -113,12 +107,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnNovoPlano.addEventListener('click', (e) => {
         e.preventDefault();
-        atualizarCamposVisiveis(); 
+        atualizarCamposVisiveis();
         modal.style.display = 'flex';
     });
 
     document.getElementById('btnFecharModalPlano').addEventListener('click', () => modal.style.display = 'none');
-    
+
     const btnFechar2 = document.getElementById('btnFecharModalPlano2');
     if (btnFechar2) {
         btnFechar2.addEventListener('click', () => modal.style.display = 'none');
@@ -127,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('formNovoPlano').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const payload = {
             nome: document.getElementById('planoNome').value,
             ervaAromatica: document.getElementById('planoErva').value,
@@ -162,11 +156,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const respostaForm = await fetch('http://localhost:5000/api/planos', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload) 
+                body: JSON.stringify(payload)
             });
 
             const dadosForm = await respostaForm.json();
-            
+
             if (dadosForm.sucesso) {
                 modal.style.display = 'none';
                 location.reload();
@@ -186,11 +180,11 @@ async function autorizarPlano(id) {
             method: 'PATCH',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        
+
         const dados = await resposta.json();
-        
+
         if (dados.sucesso) {
-            location.reload(); 
+            location.reload();
         } else {
             alert("O Backend recusou: " + dados.erro);
         }

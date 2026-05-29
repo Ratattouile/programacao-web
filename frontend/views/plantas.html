@@ -10,7 +10,7 @@
     <script defer src="/frontend/js/home.js"></script>
     <script defer src="/frontend/js/alertas.js"></script>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_check,eco,logout,notifications,settings,stacks,warning" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=calendar_check,eco,file_upload,logout,notifications,settings,stacks,warning" />
 
 </head>
 
@@ -26,7 +26,7 @@
             <span></span>
             <span></span>
         </button>
-        
+
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
@@ -62,31 +62,31 @@
         </div>
     </header>
     <main class="main-content">
-    <header class="topbar">
-    <h1>Plantas</h1>
-    
-    <div class="topbar-actions">
-        <button id="btnNovaPlanta" class="btn-secondary">+ Nova Planta</button>
-        
-        <div class="card import-card">
-            <div class="section-title-row">
-                <span class="material-symbols-outlined" style="font-size:16px; color:rgba(94,204,138,0.5)">file_upload</span>
-                <h2>Importar Plantas via CSV</h2>
-            </div>
-            <div class="import-area"> 
-                <input type="file" id="ficheiroCSV" accept=".csv" style="display:none" />
-                <label for="ficheiroCSV" class="file-drop-zone" id="fileDropZone"> 
-                    <span class="material-symbols-outlined" style="font-size:18px">file_upload</span>
-                    <span id="fileLabel">Selecionar ficheiro .csv</span>
-                </label>
-                <button id="btnImportarCSV" class="btn-secondary" style="white-space:nowrap; flex-shrink:0">Importar</button>
-            </div> 
-        </div>
-    </div>
-</header>
+        <header class="topbar">
+            <h1>Plantas</h1>
 
+            <div class="topbar-actions">
+                <button id="btnNovaPlanta" class="btn-secondary">+ Nova Planta</button>
+            </div>
+        </header>
         <section class="content-area">
-            <div class="card mt-2">
+            <div class="card import-card">
+                <div class="section-title-row">
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px; color:rgba(94,204,138,0.5)">file_upload</span>
+                    <h2>Importar Plantas via CSV</h2>
+                </div>
+                <div class="import-area">
+                    <input type="file" id="ficheiroCSV" accept=".csv" style="display:none" />
+                    <label for="ficheiroCSV" class="file-drop-zone" id="fileDropZone">
+                        <span class="material-symbols-outlined" style="font-size:18px">file_upload</span>
+                        <span id="fileLabel">Selecionar ficheiro .csv</span>
+                    </label>
+                    <button id="btnImportarCSV" class="btn-secondary"
+                        style="white-space:nowrap; flex-shrink:0">Importar</button>
+                </div>
+            </div>
+            <div class="card mt-2" style="margin-top: 15px;">
                 <div class="section-title-row">
                     <h2>Todas as Plantas</h2>
                 </div>

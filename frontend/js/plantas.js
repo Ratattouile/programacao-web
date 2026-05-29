@@ -13,6 +13,57 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const token = sessionStorage.getItem('token');
 
+    if (!document.getElementById('btnImportarCSV')) return;
+    
+    const btnImportar = document.getElementById('btnImportarCSV');
+    if (btnImportar) {
+        btnImportar.addEventListener('click', async () => {
+            const inputFicheiro = document.getElementById('ficheiroCSV');
+
+            if (inputFicheiro.files.length === 0) {
+                return alert('Por favor, escolha um ficheiro CSV primeiro!');
+            }
+
+            const formData = new FormData();
+            formData.append('ficheiro', inputFicheiro.files[0]);
+
+            try {
+                const resposta = await fetch('http://localhost:5000/api/plantas/importar', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+                    alert('Sucesso! ' + dados.mensagem);
+                    inputFicheiro.value = '';
+                    document.getElementById('fileLabel').textContent = 'Selecionar ficheiro .csv';
+                    document.getElementById('fileDropZone').classList.remove('has-file');
+                } else {
+                    alert('Erro na importação: ' + dados.erro);
+                }
+            } catch (err) {
+                alert('Erro de ligação ao servidor.');
+            }
+        });
+    }
+
+    const ficheiroCSV = document.getElementById('ficheiroCSV');
+    if (ficheiroCSV) {
+        ficheiroCSV.addEventListener('change', () => {
+            const dropZone = document.getElementById('fileDropZone');
+            const fileLabel = document.getElementById('fileLabel');
+            if (ficheiroCSV.files.length > 0) {
+                fileLabel.textContent = ficheiroCSV.files[0].name;
+                dropZone.classList.add('has-file');
+            } else {
+                fileLabel.textContent = 'Selecionar ficheiro .csv';
+                dropZone.classList.remove('has-file');
+            }
+        });
+    }
     async function carregarPlantas() {
         const resposta = await fetch('http://localhost:5000/api/plantas', {
             headers: { 'Authorization': `Bearer ${token}` }

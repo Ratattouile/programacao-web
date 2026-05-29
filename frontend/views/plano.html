@@ -29,7 +29,7 @@
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
-        
+
         <nav class="navbar-nav">
             <ul>
                 <li><a href="/frontend/views/home.html">Visão Geral</a></li>
@@ -88,13 +88,15 @@
                     <h2>Todos os Planos</h2>
                 </div>
                 <table class="data-table">
-                  <thead>
+                    <thead>
                         <tr>
                             <th>Nome do Plano</th>
                             <th>Erva Aromática</th>
                             <th>Tipo</th>
                             <th>Automação</th>
-                            <th>Detalhes / Tarefa</th> <th>Estado</th> <th>Ações</th>
+                            <th>Detalhes / Tarefa</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaPlanos">
@@ -118,89 +120,97 @@
                         <p class="modal-subtitle">Configura um novo plano de cultivo para a estufa.</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close btn-fechar-modal-plano" aria-label="Fechar">
+                <button type="button" id="btnFecharModalPlano" class="btn-close btn-fechar-modal-plano" aria-label="Fechar">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                         <path d="M2 2l10 10M12 2L2 12" stroke="#6b9e6b" stroke-width="1.6" stroke-linecap="round" />
                     </svg>
                 </button>
             </div>
             <div class="modal-divider"></div>
-           <form id="formNovoPlano">
-    <div class="form-group">
-        <label for="planoNome">Nome</label>
-        <input type="text" id="planoNome" placeholder="ex: Plano Inverno 2026" required>
-    </div>
-    <div class="form-group">
-        <label for="planoErva">Erva Aromática</label>
-        <select id="planoErva" required></select>
-    </div>
-    <div class="form-group">
-        <label for="planoTipo">Tipo</label>
-        <div class="select-wrapper">
-            <select id="planoTipo" required>
-                <option value="Regular">Regular</option>
-                <option value="Pontual">Pontual</option>
-                <option value="Emergencia">Emergência</option>
-            </select>
+            <form id="formNovoPlano">
+                <div class="form-group">
+                    <label for="planoNome">Nome</label>
+                    <input type="text" id="planoNome" placeholder="ex: Plano Inverno 2026" required>
+                </div>
+                <div class="form-group">
+                    <label for="planoErva">Erva Aromática</label>
+                    <select id="planoErva" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="planoTipo">Tipo</label>
+                    <div class="select-wrapper">
+                        <select id="planoTipo" required>
+                            <option value="Regular">Regular</option>
+                            <option value="Pontual">Pontual</option>
+                            <option value="Emergencia">Emergência</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="camposRegular"
+                    style="display: none; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4 style="margin-top: 0; color: #a8e6a8; margin-bottom: 1rem;">Definições Regulares</h4>
+                    <div class="form-group"><label>Temp. Mínima</label><input type="number" id="tempMin"></div>
+                    <div class="form-group"><label>Temp. Máxima</label><input type="number" id="tempMax"></div>
+                    <div class="form-group"><label>Humidade Mínima</label><input type="number" id="humMin"></div>
+                    <div class="form-group"><label>Humidade Máxima</label><input type="number" id="humMax"></div>
+                    <div class="form-group"><label>Luz Mínima</label><input type="number" id="luzMin"></div>
+                    <div class="form-group"><label>Luz Máxima</label><input type="number" id="luzMax"></div>
+                    <div class="form-group"><label>Plano de Rega</label><input type="text" id="planoRega"
+                            placeholder="ex: A cada 2 dias"></div>
+                    <div class="form-group"><label>Plano de Fertilização</label><input type="text"
+                            id="planoFertilizacao" placeholder="ex: Semanalmente"></div>
+                    <div class="form-group"><label>Duração do Ciclo (Dias)</label><input type="number"
+                            id="duracaoCiclo"></div>
+                </div>
+
+                <div id="camposEmergencia"
+                    style="display: none; background: rgba(255,200,0,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4 style="margin-top: 0; color: #ffcc00; margin-bottom: 1rem;">Definições de Emergência</h4>
+                    <div class="form-group"><label>Intervalo de Intervenção (Horas)</label><input type="number"
+                            id="intervaloIntervencao"></div>
+                    <div class="form-group"><label>Tipo de Intervenção</label><input type="text" id="tipoIntervencao"
+                            placeholder="ex: Pesticida"></div>
+                    <div class="form-group"><label>Dosagem</label><input type="text" id="dosagem"
+                            placeholder="ex: 50ml/litro"></div>
+                </div>
+
+                <div id="camposPontual"
+                    style="display: none; background: rgba(200,200,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4 style="margin-top: 0; color: #b3b3ff; margin-bottom: 1rem;">Definições Pontuais</h4>
+                    <div class="form-group"><label>Tarefa Pontual</label><input type="text" id="tarefaPontual"
+                            placeholder="ex: Podar galhos secos"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="planoAutomacao">Automação (Modo)</label>
+                    <div class="select-wrapper">
+                        <select id="planoAutomacao" required>
+                            <option value="Manual">Manual</option>
+                            <option value="Automático">Automático</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="tarefaGlobalGroup">
+                    <label for="planoTarefa">Tarefa Base</label>
+                    <div class="select-wrapper">
+                        <select id="planoTarefa">
+                            <option value="Rega">Rega</option>
+                            <option value="Fertilização">Fertilização</option>
+                            <option value="Colheita">Colheita</option>
+                            <option value="Monitorização">Monitorização</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-divider"></div>
+                <div class="actions-group">
+                    <button type="submit" class="btn-terceario">Criar plano</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <div id="camposRegular" style="display: none; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-        <h4 style="margin-top: 0; color: #a8e6a8; margin-bottom: 1rem;">Definições Regulares</h4>
-        <div class="form-group"><label>Temp. Mínima</label><input type="number" id="tempMin"></div>
-        <div class="form-group"><label>Temp. Máxima</label><input type="number" id="tempMax"></div>
-        <div class="form-group"><label>Humidade Mínima</label><input type="number" id="humMin"></div>
-        <div class="form-group"><label>Humidade Máxima</label><input type="number" id="humMax"></div>
-        <div class="form-group"><label>Luz Mínima</label><input type="number" id="luzMin"></div>
-        <div class="form-group"><label>Luz Máxima</label><input type="number" id="luzMax"></div>
-        <div class="form-group"><label>Plano de Rega</label><input type="text" id="planoRega" placeholder="ex: A cada 2 dias"></div>
-        <div class="form-group"><label>Plano de Fertilização</label><input type="text" id="planoFertilizacao" placeholder="ex: Semanalmente"></div>
-        <div class="form-group"><label>Duração do Ciclo (Dias)</label><input type="number" id="duracaoCiclo"></div>
-    </div>
-
-    <div id="camposEmergencia" style="display: none; background: rgba(255,200,0,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-        <h4 style="margin-top: 0; color: #ffcc00; margin-bottom: 1rem;">Definições de Emergência</h4>
-        <div class="form-group"><label>Intervalo de Intervenção (Horas)</label><input type="number" id="intervaloIntervencao"></div>
-        <div class="form-group"><label>Tipo de Intervenção</label><input type="text" id="tipoIntervencao" placeholder="ex: Pesticida"></div>
-        <div class="form-group"><label>Dosagem</label><input type="text" id="dosagem" placeholder="ex: 50ml/litro"></div>
-    </div>
-
-    <div id="camposPontual" style="display: none; background: rgba(200,200,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-        <h4 style="margin-top: 0; color: #b3b3ff; margin-bottom: 1rem;">Definições Pontuais</h4>
-        <div class="form-group"><label>Tarefa Pontual</label><input type="text" id="tarefaPontual" placeholder="ex: Podar galhos secos"></div>
-    </div>
-
-    <div class="form-group">
-        <label for="planoAutomacao">Automação (Modo)</label>
-        <div class="select-wrapper">
-            <select id="planoAutomacao" required>
-                <option value="Manual">Manual</option>
-                <option value="Automático">Automático</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group" id="tarefaGlobalGroup">
-        <label for="planoTarefa">Tarefa Base</label>
-        <div class="select-wrapper">
-            <select id="planoTarefa">
-                <option value="Rega">Rega</option>
-                <option value="Fertilização">Fertilização</option>
-                <option value="Colheita">Colheita</option>
-                <option value="Monitorização">Monitorização</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="modal-divider"></div>
-    <div class="actions-group">
-    <button type="button" id="btnFecharModalPlano" class="btn-close btn-fechar-modal-plano" aria-label="Fechar">
-     <button type="submit" class="btn-terceario">Criar plano</button>
-    </div>
-</form>
-        </div>
-    </div>
-
 </body>
 
 </html>
