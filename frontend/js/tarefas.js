@@ -74,13 +74,14 @@ async function carregarTarefas(token) {
     const agora = new Date();
     const tbodyPendentes = document.getElementById('tabelaTarefasPendentes');
     tbodyPendentes.innerHTML = '';
-    pendentes.forEach(t => {
+    pendentes.forEach((t, index) => {
         const prazo = new Date(t.prazoLimite);
         const atrasada = prazo < agora;
         const prazoStr = atrasada
             ? `<span class="late">${prazo.toLocaleString('pt-PT')} — Atrasada</span>`
             : prazo.toLocaleString('pt-PT');
         const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
             <td>${t.tipo}</td>
             <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>
@@ -95,6 +96,7 @@ async function carregarTarefas(token) {
     tbodyExecutadas.innerHTML = '';
     executadas.forEach(t => {
         const tr = document.createElement('tr');
+        tr.style.animationDelay = `${index * 50}ms`;
         tr.innerHTML = `
             <td>${t.tipo}</td>
             <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>

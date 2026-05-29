@@ -22,8 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tbody = document.getElementById('tabelaPlantas');
         tbody.innerHTML = '';
 
-        dados.dados.forEach(planta => {
+        dados.dados.forEach((planta, index) => {
             const tr = document.createElement('tr');
+            tr.style.animationDelay = `${250 + index * 100}ms`;
             tr.innerHTML = `
                 <td>${planta.nome}</td>
                 <td>${planta.especie}</td>

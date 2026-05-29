@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
 
 exports.listarUtilizadores = async (req, res) => {
     try {
-        const utilizadores = await Utilizador.find({}, 'password').sort({ dataRegisto: -1 });
+        const utilizadores = await Utilizador.find({}, '-password').sort({ dataRegisto: -1 });
         return res.status(200).json({ sucesso: true, dados: utilizadores });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });

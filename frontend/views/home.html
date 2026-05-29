@@ -14,8 +14,19 @@
 
 </head>
 
+<div id="loadingBar"></div>
+<script src="/frontend/js/ambient.js"></script>
+
+<div id="navBackdrop" class="nav-backdrop"></div>
+
 <body class="app-layout">
     <header class="top-navbar">
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <div class="navbar-brand">
             <h2>🌱 GREENHERB</h2>
         </div>
@@ -26,24 +37,23 @@
                 <li><a href="/frontend/views/lotes.html">Lotes de Cultivo</a></li>
                 <li><a href="/frontend/views/plano.html">Planos de Cultivo</a></li>
                 <li><a href="/frontend/views/tarefas.html">Tarefas</a></li>
-                <!--<li><a href="/frontend/views/alertas.html">Alertas</a></li>-->
                 <li><a href="/frontend/views/plantas.html">Plantas</a></li>
             </ul>
         </nav>
 
         <div class="navbar-user">
             <button class="alert-btn" aria-label="Alertas"
-                onclick="window.location.href='/frontend/views/alertas.html'">
+                onclick="window.location.href='/frontend/views/utilizadores.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">notifications</span>
                 <div class="alert-dot" id="alertDot"></div>
                 <span class="tooltip">Alertas</span>
             </button>
             <button class="settings-btn" aria-label="Gerir Utilizadores" id="set-btn"
-                onclick="window.location.href='/frontend/views/alertas.html'">
+                onclick="window.location.href='/frontend/views/utilizadores.html'">
                 <span class="material-symbols-outlined" style="font-size:18px">settings</span>
                 <span class="tooltip">Gerir Utilizadores</span>
             </button>
-            <div class="nav-avatar">JG</div>
+            <div class="nav-avatar" id="navAvatar">JG</div>
             <span id="userDisplay">Bem-vindo</span>
             <button id="logoutBtn" class="logout-btn">
                 <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
@@ -112,7 +122,8 @@
 
             <div class="card mt-2 import-card" style="margin-top: 1rem">
                 <div class="section-title-row">
-                    <span class="material-symbols-outlined" style="font-size:16px; color:rgba(94,204,138,0.5)">file_upload</span>
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px; color:rgba(94,204,138,0.5)">file_upload</span>
                     <h2>Importar Plantas via CSV</h2>
                 </div>
                 <div class="import-area">
@@ -121,7 +132,8 @@
                         <span class="material-symbols-outlined" style="font-size:18px">file_upload</span>
                         <span id="fileLabel">Selecionar ficheiro .csv</span>
                     </label>
-                    <button id="btnImportarCSV" class="btn-secondary" style="white-space:nowrap; flex-shrink:0">Importar</button>
+                    <button id="btnImportarCSV" class="btn-secondary"
+                        style="white-space:nowrap; flex-shrink:0">Importar</button>
                 </div>
             </div>
 
