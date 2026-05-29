@@ -1,4 +1,5 @@
 const Lote = require('../models/Lote');
+const { registarLog } = require('../utils/auditoria');
 
 exports.listarLotes = async (req, res) => {
     try {
@@ -18,6 +19,7 @@ exports.criarLotes = async (req, res) => {
 
     try {
         const novoLote = await Lote.create({ ervaAromatica, planoId, quantidadeInicial, quantidadeAtual: quantidadeInicial });
+        await registarLog(req, 'Criou Lote', `Erva: ${ervaAromatica} | Qtd: ${quantidadeInicial}`);
         return res.status(201).json({ sucesso: true, mensagem: "Lote criado com sucesso", dados: novoLote });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -48,7 +50,7 @@ exports.dividirLote = async (req, res) => {
             quantidadeInicial: quantidadeSeparar,
             quantidadeAtual: quantidadeSeparar
         });
-
+        await registarLog(req, 'Dividiu Lote', `Separou ${quantidadeSeparar} plantas do Lote original (${loteOriginal._id})`);
         return res.status(200).json({ sucesso: true, mensagem: "Lote dividido com sucesso", dados: { loteOriginal, loteFilho } });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -69,6 +71,7 @@ exports.perdasLote = async (req, res) => {
         lote.quantidadeAtual -= quantidadePerdida;
         lote.estado = "Comprometido";
         await lote.save();
+        await registarLog(req, 'Registou Perda', `Lote: ${lote._id} | Qtd Perdida: ${quantidadePerdida} | Motivo: ${motivo}`);
 
         return res.status(200).json({ sucesso: true, mensagem: `Perda de ${quantidadePerdida} plantas registada`, dados: lote });
     } catch (err) {
