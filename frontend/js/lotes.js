@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     const dados = await resposta.json();
 
-        const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
+    const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     const dadosPlantas = await respostaPlantas.json();
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         select.innerHTML = '';
         dados.dados.forEach(p => {
             select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
-            
+
         });
         modal.style.display = 'flex';
     });
@@ -115,21 +115,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('modalDividirLote').style.display = 'none';
     });
 
-    document.getElementById('formDividirLote').addEventListener('submit', async (e) =>{
+    document.getElementById('formDividirLote').addEventListener('submit', async (e) => {
         e.preventDefault();
         const quantidadeSeparar = parseInt(document.getElementById('dividirQuantidade').value);
 
+        if (!quantidadeSeparar || quantidadeSeparar <= 0) {
+            return alert('A quantidade a separar deve ser maior que zero.');
+        }
+
         const resposta = await fetch(`http://localhost:5000/api/lotes/${loteIdSelecionado}/dividir`, {
             method: 'POST',
-            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ quantidadeSeparar })
         });
 
         const dados = await resposta.json();
-        if(dados.sucesso){
+        if (dados.sucesso) {
             document.getElementById('modalDividirLote').style.display = 'none';
             location.reload();
-        }else{
+        } else {
             alert(dados.erro);
         }
     });
@@ -147,7 +151,7 @@ if (btnFecharSensores) {
 async function abrirModalSensores(loteId, ervaAromatica) {
     document.getElementById('sensorLoteId').value = loteId;
     document.getElementById('sensoresLoteNome').textContent = `Lote de ${ervaAromatica}`;
-    
+
     tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">A carregar dados...</td></tr>';
     modalSensores.style.display = 'flex';
 
@@ -160,8 +164,8 @@ async function abrirModalSensores(loteId, ervaAromatica) {
 
         if (dados.sucesso) {
             const medicoesDesteLote = dados.dados.filter(m => m.loteId && m.loteId._id === loteId);
-            
-            tabelaHistorico.innerHTML = ''; 
+
+            tabelaHistorico.innerHTML = '';
 
             if (medicoesDesteLote.length === 0) {
                 tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sem medições registadas.</td></tr>';
@@ -187,17 +191,27 @@ async function abrirModalSensores(loteId, ervaAromatica) {
 
 document.getElementById('formSimularMedicao').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const token = sessionStorage.getItem('token');
     const loteId = document.getElementById('sensorLoteId').value;
     const temperatura = document.getElementById('simTemp').value;
     const humidade = document.getElementById('simHum').value;
     const luminosidade = document.getElementById('simLuz').value;
 
+    if (temperatura === '' || humidade === '' || luminosidade === '') {
+        return alert('Preenche todos os campos da medição.');
+    }
+    if (humidade < 0 || humidade > 100) {
+        return alert('A humidade deve estar entre 0% e 100%.');
+    }
+    if (luminosidade < 0) {
+        return alert('A luminosidade não pode ser negativa.');
+    }
+
     try {
         const resposta = await fetch('http://localhost:5000/api/medicoes', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
@@ -208,7 +222,7 @@ document.getElementById('formSimularMedicao').addEventListener('submit', async (
         if (dados.sucesso) {
             document.getElementById('formSimularMedicao').reset();
             const erva = document.getElementById('sensoresLoteNome').textContent.replace('Lote de ', '');
-            abrirModalSensores(loteId, erva); 
+            abrirModalSensores(loteId, erva);
         } else {
             alert("Erro ao enviar leitura: " + dados.erro);
         }
@@ -225,11 +239,11 @@ if (btnExportar) {
             const resposta = await fetch('http://localhost:5000/api/lotes/exportar', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            
+
             // Converte a resposta num Ficheiro (Blob)
             const blob = await resposta.blob();
             const url = window.URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = 'Relatorio_Lotes_GreenHerb.csv';

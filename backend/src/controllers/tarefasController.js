@@ -21,7 +21,7 @@ exports.criarTarefas = async (req, res) => {
 
     try {
         const novaTarefa = await Tarefa.create({ tipo, loteId, responsavel, prazoLimite });
-        await registarLog(req, 'Concluiu Tarefa', `Tarefa concluída | Tipo: ${tarefa.tipo} | Lote: ${tarefa.loteId}`);        
+        await registarLog(req, 'Criou Tarefa', `Tarefa concluída | Tipo: ${tarefa.tipo} | Lote: ${tarefa.loteId}`);
         return res.status(201).json({ sucesso: true, mensagem: "Tarefa criada com sucesso", dados: novaTarefa });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -35,8 +35,8 @@ exports.executarTarefa = async (req, res) => {
             { estado: "Concluída", dataExecucao: new Date() },
             { new: true }
         );
-        await registarLog(req, 'Concluiu Tarefa', `Tarefa concluída | Tipo: ${tarefa.tipo} | Lote: ${tarefa.loteId}`);        
         if (!tarefa) return res.status(404).json({ sucesso: false, erro: "Tarefa não encontrada" });
+        await registarLog(req, 'Concluiu Tarefa', `Tipo: ${tarefa.tipo} | Lote: ${tarefa.loteId}`);
         return res.status(200).json({ sucesso: true, mensagem: "Tarefa executada com sucesso", dados: tarefa });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });

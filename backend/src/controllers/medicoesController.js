@@ -22,8 +22,6 @@ exports.registarMedicao = async (req, res) => {
         const planta = plantas.find(p =>
             p.nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === ervaAtual
         );
-        console.log('erva:', loteExiste.ervaAromatica);
-        console.log('planta encontrada:', planta);
         if (planta) {
             if (planta.tempMinima !== undefined && temperatura < planta.tempMinima) {
                 await Alerta.create({
