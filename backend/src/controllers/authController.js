@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
 
 exports.listarUtilizadores = async (req, res) => {
     try {
-        const utilizadores = await Utilizador.find({}, '-password').sort({ dataRegisto: -1 });
+        const utilizadores = await Utilizador.find({}, 'nome username cargo dataRegisto').sort({ dataRegisto: -1 });
         return res.status(200).json({ sucesso: true, dados: utilizadores });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -71,6 +71,19 @@ exports.alterarCargo = async (req, res) => {
     try {
         const utilizador = await Utilizador.findByIdAndUpdate(req.params.id, { cargo }, { new: true, select: '-password' });
         if (!utilizador) return res.status(404).json({ sucesso: false, erro: "Utilizador não encontrado." });
+        return res.status(200).json({ sucesso: true, dados: utilizador });
+    } catch (err) {
+        return res.status(500).json({ sucesso: false, erro: err.message });
+    }
+}
+
+exports.historicoUtilizadores = async (req, res) => {
+    try {
+        const filtro = req.query.utilizador ? { utilizador: req.query.utilizador } : {};
+        const historico = await require('../models/LogsAuditoria').find(filtro)
+            .populate('utilizador', 'nome')
+            .sort({ dataRegisto: -1 });
+        return res.status(200).json({ sucesso: true, dados: historico });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
     }
@@ -82,7 +95,7 @@ exports.eliminarUtilizador = async (req, res) => {
     }
 
     try{
-        const utilizador = await Utilizador.findByIdAndUpdate(req.params.id);
+        const utilizador = await Utilizador.findByIdAndDelete(req.params.id);
         if(!utilizador) return res.status(404).json({ sucesso: false, erro: "Utilizador não econtrado" });
         return res.status(200).json({ sucesso: true, mensagem: "Utilizador eliminado com sucesso." });
     }catch(err){

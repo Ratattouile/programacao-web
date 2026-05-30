@@ -1,4 +1,5 @@
 const Lote = require('../models/Lote');
+const Alerta = require('../models/Alerta');
 const { registarLog } = require('../utils/auditoria');
 
 exports.listarLotes = async (req, res) => {
@@ -73,6 +74,12 @@ exports.perdasLote = async (req, res) => {
         await lote.save();
         await registarLog(req, 'Registou Perda', `Lote: ${lote._id} | Qtd Perdida: ${quantidadePerdida} | Motivo: ${motivo}`);
 
+        await Alerta.create({
+            loteId: lote._id,
+            gravidade: 'Crítico',
+            descricao: `Perda de ${quantidadePerdida} plantas registada. Motivo: ${motivo}`
+        });
+
         return res.status(200).json({ sucesso: true, mensagem: `Perda de ${quantidadePerdida} plantas registada`, dados: lote });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -83,13 +90,13 @@ exports.perdasLote = async (req, res) => {
 exports.exportarCSV = async (req, res) => {
     try {
         const lotes = await Lote.find().populate('planoId', 'nome');
-        
+
         let csv = 'ID Lote,Erva Aromatica,Plano,Quantidade Inicial,Quantidade Atual,Estado,Data Inicio\n';
-        
+
         lotes.forEach(lote => {
             const planoNome = lote.planoId ? lote.planoId.nome : 'Sem plano';
             const data = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
-            
+
             csv += `${lote._id},${lote.ervaAromatica},${planoNome},${lote.quantidadeInicial},${lote.quantidadeAtual},${lote.estado},${data}\n`;
         });
 
