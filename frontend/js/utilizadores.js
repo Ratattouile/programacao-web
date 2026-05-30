@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await carregarUtilizadores();
 
-    // Modal Novo Utilizador
     const modalNovo = document.getElementById('modalNovoUtilizador');
     document.getElementById('btnNovoUtilizador').addEventListener('click', () => modalNovo.style.display = 'flex');
     document.getElementById('btnCancelarNovoUtilizador').addEventListener('click', () => modalNovo.style.display = 'none');
@@ -47,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await carregarUtilizadores();
     });
 
-    // Modal Editar Cargo
     const modalEditar = document.getElementById('modalEditarCargo');
     document.getElementById('btnCancelarEditarCargo').addEventListener('click', () => modalEditar.style.display = 'none');
 
@@ -67,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await carregarUtilizadores();
     });
 
-    // Modal Eliminar
     const modalEliminar = document.getElementById('modalEliminar');
     document.getElementById('btnCancelarEliminar').addEventListener('click', () => modalEliminar.style.display = 'none');
 });
@@ -78,8 +75,6 @@ async function carregarUtilizadores() {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     const { dados: utilizadores } = await res.json();
-    //const json = await res.json();
-    console.log(utilizadores);
     if (!utilizadores) return;
 
     animarContador(document.getElementById('statTotal'), utilizadores.length);
@@ -87,7 +82,6 @@ async function carregarUtilizadores() {
     animarContador(document.getElementById('statTecnicos'), utilizadores.filter(u => u.cargo === 'Técnico').length);
     animarContador(document.getElementById('statResp'), utilizadores.filter(u => u.cargo === 'Responsavel Tecnico').length);
     animarContador(document.getElementById('contUtilizadores'), utilizadores.length);
-
 
     const tbody = document.getElementById('tabelaUtilizadores');
     tbody.innerHTML = '';
@@ -102,6 +96,7 @@ async function carregarUtilizadores() {
             <td>${dataRegisto}</td>
             <td>
                 <div class="actions-group">
+                    <button class="btn-action blue" onclick="abrirLogs('${u._id}', '${u.nome}')">Ver Logs</button>
                     <button class="btn-action green" onclick="abrirEditarCargo('${u._id}', '${u.nome}', '${u.cargo}')">Editar Cargo</button>
                     <button class="btn-action ghost" onclick="abrirEliminar('${u._id}', '${u.nome}')">Eliminar</button>
                 </div>
@@ -140,4 +135,37 @@ function abrirEliminar(id, nome) {
         document.getElementById('modalEliminar').style.display = 'none';
         await carregarUtilizadores();
     };
+}
+
+async function abrirLogs(utilizadorId, nome) {
+    const token = sessionStorage.getItem('token');
+    document.getElementById('logsSubtitle').textContent = nome;
+    document.getElementById('listaLogs').innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px">A carregar...</p>';
+    document.getElementById('modalLogs').style.display = 'flex';
+
+    const res = await fetch(`http://localhost:5000/api/auth/utilizadores/logs?utilizador=${utilizadorId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const { dados: logs } = await res.json();
+
+    const lista = document.getElementById('listaLogs');
+
+    if (!logs || !logs.length) {
+        lista.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:1rem">Sem atividade registada</p>';
+        return;
+    }
+
+    lista.innerHTML = logs.map(l => {
+        const data = new Date(l.dataRegisto).toLocaleString('pt-PT');
+        return `
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:0.5px solid rgba(255,255,255,0.05)">
+            <div style="width:7px;height:7px;border-radius:50%;background:#c9a84c;margin-top:6px;flex-shrink:0"></div>
+            <div>
+                <div style="font-size:14px;color:rgba(255,255,255,0.85);font-weight:500">${l.acao}</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">${l.detalhes}</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:3px">${data}</div>
+            </div>
+        </div>
+    `;
+    }).join('');
 }

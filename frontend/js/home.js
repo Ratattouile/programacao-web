@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/frontend/views/login.html';
     });
 
-    
+    if(!document.getElementById('homeDetect')) return;
+
     const setBtn = document.getElementById('set-btn');
     setBtn.style.display = (utilizador.cargo === 'Administrador') ? '' : 'none';
 

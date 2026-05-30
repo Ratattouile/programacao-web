@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!document.getElementById('tabelaAlertas')) return;
 
-    //document.getElementById('contCriticos').textContent = pendentes.filter(a => a.gravidade === 'Crítico').length;
-    //document.getElementById('contAvisos').textContent = pendentes.filter(a => a.gravidade === 'Aviso').length;
-    //document.getElementById('contInformativos').textContent = pendentes.filter(a => a.gravidade === 'Informativo').length;
     animarContador(document.getElementById('contCriticos'), pendentes.filter(a => a.gravidade === 'Crítico').length);
     animarContador(document.getElementById('contAvisos'), pendentes.filter(a => a.gravidade === 'Aviso').length);
     animarContador(document.getElementById('contInformativos'), pendentes.filter(a => a.gravidade === 'Informativo').length);
