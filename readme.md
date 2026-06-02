@@ -51,22 +51,29 @@ programacao-web/
 * Conta e Cluster configurado no MongoDB Atlas
 
 ### 1. Clonar o repositório
+```bash
 git clone https://github.com/Ratattouile/programacao-web.git
 cd programacao-web
-
+```
 ### 2. Instalar dependências (Backend)
+```bash
 cd backend
 npm install
+```
 
 ### 3. Configurar variáveis de ambiente
 Crie um ficheiro chamado .env na pasta backend com o seguinte conteúdo:
+```
 PORT=5000
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/greenherb?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=sua_secret_key_super_segura
+```
 
 ### 4. Iniciar o servidor
+```bash
 node src/index.js
-O servidor ficará disponível em http://localhost:5000.
+```
+O servidor ficará disponível em `http://localhost:5000`.
 
 ### 5. Abrir o frontend
 Abra o ficheiro frontend/views/login.html diretamente no seu browser ou, em alternativa, utilize a extensão Live Preview do VS Code para evitar problemas de CORS locais.
