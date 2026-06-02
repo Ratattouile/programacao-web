@@ -17,11 +17,14 @@ Este é o repositório central do projeto GREENHERB, dividido entre o Frontend (
 
 ## Estrutura do Projeto
 
+
+```text
 programacao-web/
 ├── frontend/
 │   ├── views/          # Páginas HTML (login, home, lotes, plantas, planos, tarefas, alertas, utilizadores, register)
-│   ├── js/             # Lógica do frontend (incluindo db.js para sincronização IndexedDB e ambient.js)
-│   └── css/            # Estilos (style.css)
+│   ├── js/             # Lógica do frontend (db.js sincronização IndexedDB, sw.js service worker, ambient.js)
+│   ├── css/            # Estilos (style.css)
+│   └── sw.js           # Service Worker (cache de recursos estáticos)
 ├── backend/
 │   └── src/
 │       ├── controllers/    # Lógica de negócio (auth, lotes, plantas, planos, tarefas, medicoes, alertas)
@@ -30,8 +33,9 @@ programacao-web/
 │       ├── middleware/     # JWT (authMiddleware.js) e verificação de cargos (verificarCargo.js)
 │       ├── utils/          # Utilitários globais (auditoria.js)
 │       └── db.js           # Configuração de ligação ao MongoDB
-└── api.yaml            # Especificação integral da API REST
-
+├── api.yaml            # Especificação integral da API REST
+└── ARQUITETURA.md      # Documento da arquitetura de armazenamento no browser
+```
 ---
 
 ## Funcionalidades Principais Implementadas
