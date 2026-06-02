@@ -1,5 +1,6 @@
+import { guardarOperacaoPendente, sincronizarPendentes, guardarLotesCache, obterLotesCache, guardarPlantasCache, obterPlantasCache, guardarPlanosCache, obterPlanosCache, guardarMedicoesCache, obterMedicoesCache } from './db.js';
+
 let loteIdSelecionado = null;
-import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
 
 function dividirLote(id) {
     loteIdSelecionado = id;
@@ -30,13 +31,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         dados = await respostaLotes.json();
+        if (dados.sucesso) await guardarLotesCache(dados.dados);
+    } catch (err) {
+        console.warn('Offline — a ler lotes do cache');
+        dados = { dados: await obterLotesCache() };
+        const ud = document.getElementById('userDisplay');
+        if (ud && !ud.innerHTML.includes('Offline')) {
+            ud.innerHTML += ' <span style="color:#c9a84c">(Offline)</span>';
+        }
+    }
 
+    try {
         const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         dadosPlantas = await respostaPlantas.json();
+        if (dadosPlantas.sucesso) await guardarPlantasCache(dadosPlantas.dados);
     } catch (err) {
-        console.warn('Offline — a usar dados em cache');
+        dadosPlantas = { dados: await obterPlantasCache() };
     }
 
     const selectErva = document.getElementById('loteErva');
@@ -80,19 +92,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnFechar = document.getElementById('btnFecharModal');
 
     btnNovoLote.addEventListener('click', async () => {
+        const select = document.getElementById('lotePlano');
         try {
             const resposta = await fetch('http://localhost:5000/api/planos', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const dados = await resposta.json();
-            const select = document.getElementById('lotePlano');
+            if (dados.sucesso) await guardarPlanosCache(dados.dados);
             select.innerHTML = '';
             dados.dados.forEach(p => {
                 select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
             });
             modal.style.display = 'flex';
         } catch (err) {
-            alert('Sem ligação. Não é possível criar lotes offline sem lista de planos.');
+            const planos = await obterPlanosCache();
+            select.innerHTML = '';
+            planos.forEach(p => {
+                select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
+            });
+            modal.style.display = 'flex';
         }
     });
 
@@ -183,6 +201,7 @@ async function abrirModalSensores(loteId, ervaAromatica) {
         const dados = await resposta.json();
 
         if (dados.sucesso) {
+            await guardarMedicoesCache(dados.dados);
             const medicoesDesteLote = dados.dados.filter(m => m.loteId && m.loteId._id === loteId);
             tabelaHistorico.innerHTML = '';
             if (medicoesDesteLote.length === 0) {
@@ -202,7 +221,24 @@ async function abrirModalSensores(loteId, ervaAromatica) {
             }
         }
     } catch (err) {
-        tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff6b6b;">Erro ao carregar histórico.</td></tr>';
+        const todas = await obterMedicoesCache();
+        const medicoesDesteLote = todas.filter(m => m.loteId && m.loteId._id === loteId);
+        tabelaHistorico.innerHTML = '';
+        if (medicoesDesteLote.length === 0) {
+            tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sem medições em cache.</td></tr>';
+        } else {
+            medicoesDesteLote.forEach(medicao => {
+                const dataFormatada = new Date(medicao.dataRegisto).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${dataFormatada}</td>
+                <td>${medicao.temperatura} ºC</td>
+                <td>${medicao.humidade} %</td>
+                <td>${medicao.luminosidade} lx</td>
+            `;
+                tabelaHistorico.appendChild(tr);
+            });
+        }
     }
 }
 
@@ -265,3 +301,6 @@ if (btnExportar) {
         }
     });
 }
+
+window.dividirLote = dividirLote;
+window.abrirModalSensores = abrirModalSensores;

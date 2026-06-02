@@ -1,5 +1,6 @@
+import { guardarOperacaoPendente, sincronizarPendentes, guardarPlantasCache, obterPlantasCache } from './db.js';
+
 let _plantasToken = null;
-import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -115,34 +116,47 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function carregarPlantas() {
+    let lista = [];
     try {
         const resposta = await fetch('http://localhost:5000/api/plantas', {
             headers: { 'Authorization': `Bearer ${_plantasToken}` }
         });
         const dados = await resposta.json();
-        const tbody = document.getElementById('tabelaPlantas');
-        tbody.innerHTML = '';
-        dados.dados.forEach((planta, index) => {
-            const tr = document.createElement('tr');
-            tr.style.animationDelay = `${250 + index * 100}ms`;
-            tr.innerHTML = `
-                <td>${planta.nome}</td>
-                <td>${planta.especie}</td>
-                <td>${planta.tempMinima} – ${planta.tempMaxima}</td>
-                <td>${planta.humidadeMinima} – ${planta.humidadeMaxima}</td>
-                <td>${planta.cicloDeVida}</td>
-                <td>${planta.intervaloRega}</td>
-                <td>
-                    <div class="actions-group">
-                        <button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        if (dados.sucesso) {
+            lista = dados.dados;
+            await guardarPlantasCache(lista);
+        } else {
+            throw new Error(dados.erro);
+        }
     } catch (err) {
-        console.error('Erro ao carregar plantas:', err);
+        console.warn('Offline — a ler plantas do cache');
+        lista = await obterPlantasCache();
+        const ud = document.getElementById('userDisplay');
+        if (ud && !ud.innerHTML.includes('Offline')) {
+            ud.innerHTML += ' <span style="color:#c9a84c">(Offline)</span>';
+        }
     }
+
+    const tbody = document.getElementById('tabelaPlantas');
+    tbody.innerHTML = '';
+    lista.forEach((planta, index) => {
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        tr.innerHTML = `
+            <td>${planta.nome}</td>
+            <td>${planta.especie}</td>
+            <td>${planta.tempMinima} – ${planta.tempMaxima}</td>
+            <td>${planta.humidadeMinima} – ${planta.humidadeMaxima}</td>
+            <td>${planta.cicloDeVida}</td>
+            <td>${planta.intervaloRega}</td>
+            <td>
+                <div class="actions-group">
+                    <button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 async function eliminarPlanta(id) {
@@ -160,3 +174,5 @@ async function eliminarPlanta(id) {
         alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
+
+window.eliminarPlanta = eliminarPlanta;

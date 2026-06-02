@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarTarefasCache, obterTarefasCache } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -76,56 +76,68 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function carregarTarefas(token) {
+    let tarefas = [];
     try {
         const resposta = await fetch('http://localhost:5000/api/tarefas', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        const { dados: tarefas } = await resposta.json();
-
-        const pendentes = tarefas.filter(t => t.estado === 'Pendente');
-        const executadas = tarefas.filter(t => t.estado === 'Concluída');
-
-        document.getElementById('contPendentes').textContent = `${pendentes.length} tarefas`;
-        document.getElementById('contExecutadas').textContent = `${executadas.length} tarefas`;
-
-        const agora = new Date();
-        const tbodyPendentes = document.getElementById('tabelaTarefasPendentes');
-        tbodyPendentes.innerHTML = '';
-        pendentes.forEach((t, index) => {
-            const prazo = new Date(t.prazoLimite);
-            const atrasada = prazo < agora;
-            const prazoStr = atrasada
-                ? `<span class="late">${prazo.toLocaleString('pt-PT')} — Atrasada</span>`
-                : prazo.toLocaleString('pt-PT');
-            const tr = document.createElement('tr');
-            tr.style.animationDelay = `${250 + index * 100}ms`;
-            tr.innerHTML = `
-                <td>${t.tipo}</td>
-                <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>
-                <td>${prazoStr}</td>
-                <td>${t.responsavel}</td>
-                <td><button class="btn-action green" onclick="executarTarefa('${t._id}')">Executar</button></td>
-            `;
-            tbodyPendentes.appendChild(tr);
-        });
-
-        const tbodyExecutadas = document.getElementById('tabelaTarefasExecutadas');
-        tbodyExecutadas.innerHTML = '';
-        executadas.forEach((t, index) => {
-            const tr = document.createElement('tr');
-            tr.style.animationDelay = `${250 + index * 100}ms`;
-            tr.innerHTML = `
-                <td>${t.tipo}</td>
-                <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>
-                <td>${new Date(t.dataExecucao).toLocaleString('pt-PT')}</td>
-                <td>${t.responsavel}</td>
-                <td><span class="badge concluded">Concluída</span></td>
-            `;
-            tbodyExecutadas.appendChild(tr);
-        });
+        const dados = await resposta.json();
+        if (dados.sucesso) {
+            tarefas = dados.dados;
+            await guardarTarefasCache(tarefas);
+        } else {
+            throw new Error(dados.erro);
+        }
     } catch (err) {
-        console.error('Erro ao carregar tarefas:', err);
+        console.warn('Offline — a ler tarefas do cache');
+        tarefas = await obterTarefasCache();
+        const ud = document.getElementById('userDisplay');
+        if (ud && !ud.innerHTML.includes('Offline')) {
+            ud.innerHTML += ' <span style="color:#c9a84c">(Offline)</span>';
+        }
     }
+
+    const pendentes = tarefas.filter(t => t.estado === 'Pendente');
+    const executadas = tarefas.filter(t => t.estado === 'Concluída');
+
+    document.getElementById('contPendentes').textContent = `${pendentes.length} tarefas`;
+    document.getElementById('contExecutadas').textContent = `${executadas.length} tarefas`;
+
+    const agora = new Date();
+    const tbodyPendentes = document.getElementById('tabelaTarefasPendentes');
+    tbodyPendentes.innerHTML = '';
+    pendentes.forEach((t, index) => {
+        const prazo = new Date(t.prazoLimite);
+        const atrasada = prazo < agora;
+        const prazoStr = atrasada
+            ? `<span class="late">${prazo.toLocaleString('pt-PT')} — Atrasada</span>`
+            : prazo.toLocaleString('pt-PT');
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        tr.innerHTML = `
+            <td>${t.tipo}</td>
+            <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>
+            <td>${prazoStr}</td>
+            <td>${t.responsavel}</td>
+            <td><button class="btn-action green" onclick="executarTarefa('${t._id}')">Executar</button></td>
+        `;
+        tbodyPendentes.appendChild(tr);
+    });
+
+    const tbodyExecutadas = document.getElementById('tabelaTarefasExecutadas');
+    tbodyExecutadas.innerHTML = '';
+    executadas.forEach((t, index) => {
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        tr.innerHTML = `
+            <td>${t.tipo}</td>
+            <td class="lot-id">${t.loteId?.ervaAromatica || t.loteId}</td>
+            <td>${new Date(t.dataExecucao).toLocaleString('pt-PT')}</td>
+            <td>${t.responsavel}</td>
+            <td><span class="badge concluded">Concluída</span></td>
+        `;
+        tbodyExecutadas.appendChild(tr);
+    });
 }
 
 async function executarTarefa(id) {
@@ -142,3 +154,5 @@ async function executarTarefa(id) {
         alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
+
+window.executarTarefa = executarTarefa;

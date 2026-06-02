@@ -190,3 +190,7 @@ async function abrirLogs(utilizadorId, nome) {
         document.getElementById('listaLogs').innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:1rem">Erro ao carregar logs.</p>';
     }
 }
+
+window.abrirEditarCargo = abrirEditarCargo;
+window.abrirEliminar = abrirEliminar;
+window.abrirLogs = abrirLogs;

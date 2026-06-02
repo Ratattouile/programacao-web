@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarPlanosCache, obterPlanosCache, guardarPlantasCache, obterPlantasCache } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -22,13 +22,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         dados = await resposta.json();
+        if (dados.sucesso) await guardarPlanosCache(dados.dados);
+    } catch (err) {
+        console.warn('Offline — a ler planos do cache');
+        dados = { dados: await obterPlanosCache() };
+        const ud = document.getElementById('userDisplay');
+        if (ud && !ud.innerHTML.includes('Offline')) {
+            ud.innerHTML += ' <span style="color:#c9a84c">(Offline)</span>';
+        }
+    }
 
+    try {
         const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         dadosPlantas = await respostaPlantas.json();
+        if (dadosPlantas.sucesso) await guardarPlantasCache(dadosPlantas.dados);
     } catch (err) {
-        console.warn('Offline — a usar dados em cache');
+        dadosPlantas = { dados: await obterPlantasCache() };
     }
 
     const selectErva = document.getElementById('planoErva');
@@ -181,3 +192,5 @@ async function autorizarPlano(id) {
         alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
+
+window.autorizarPlano = autorizarPlano;
