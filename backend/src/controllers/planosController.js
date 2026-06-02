@@ -4,7 +4,7 @@ const { registarLog } = require('../utils/auditoria');
 
 exports.listarPlanos = async (req, res) => {
     try {
-        const planos = await Plano.find().sort({dataCriacao:-1}); //mais recentes primeiro
+        const planos = await Plano.find().sort({ dataCriacao: -1 }); //mais recentes primeiro
         return res.status(200).json({ sucesso: true, dados: planos });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
@@ -18,8 +18,8 @@ exports.criarPlanos = async (req, res) => {
         dadosPlano.estadoAutorizacao = dadosPlano.tipo === "Pontual" ? "Pendente" : "Aprovado";
 
         const novoPlano = await Plano.create(dadosPlano);
-        await registarLog(req, 'Criou Plano', `Nome: ${novoPlano.nome} | Tipo: ${novoPlano.tipo}`);        
-        
+        await registarLog(req, 'Criou Plano', `Nome: ${novoPlano.nome} | Tipo: ${novoPlano.tipo}`);
+
         return res.status(201).json({ sucesso: true, mensagem: "Plano criado com sucesso", dados: novoPlano });
     } catch (err) {
         if (err.name === 'ValidationError') {
@@ -32,10 +32,11 @@ exports.criarPlanos = async (req, res) => {
 exports.autorizarPlano = async (req, res) => {
     try {
         const plano = await Plano.findByIdAndUpdate(req.params.id, { estadoAutorizacao: "Aprovado" }, { new: true });
-        await registarLog(req, 'Autorizou Plano', `Plano aprovado: ${plano.nome}`);
         if (!plano) return res.status(404).json({ sucesso: false, erro: "Plano não encontrado" });
+        await registarLog(req, 'Autorizou Plano', `Plano aprovado: ${plano.nome}`);
         return res.status(200).json({ sucesso: true, mensagem: "Plano autorizado com sucesso", dados: plano });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
     }
 };
+

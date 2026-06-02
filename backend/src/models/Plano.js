@@ -19,7 +19,6 @@ const planoSchema = new mongoose.Schema({
     tipoIntervencao: { type: String, required: function() { return this.tipo === 'Emergencia'; } }, 
     dosagem: { type: String, required: function() { return this.tipo === 'Emergencia'; } }, 
     tarefaPontual: { type: String, required: function() { return this.tipo === 'Pontual'; } },
-    dataCriacao: { type: Date, default: Date.now },
     regrasAutomacao: { type: String, default: '' },
     tarefa: { type: String, required: true, enum: ['Rega', 'Fertilização', 'Colheita', 'Monitorização'] },
     dataCriacao: { type: Date, default: Date.now }

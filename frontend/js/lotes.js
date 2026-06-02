@@ -7,6 +7,62 @@ function dividirLote(id) {
     document.getElementById('modalDividirLote').style.display = 'flex';
 }
 
+function calcularProgressoCiclo(lote) {
+    const duracaoPrevista = lote.planoId?.duracaoCicloPrevista;
+    if (!duracaoPrevista || !lote.dataInicio) return '-';
+
+    const inicio = new Date(lote.dataInicio);
+    const fim = lote.dataFim ? new Date(lote.dataFim) : new Date();
+    const diasDecorridos = Math.floor((fim - inicio) / (1000 * 60 * 60 * 24));
+    const diff = diasDecorridos - duracaoPrevista;
+
+    let estado, cor;
+    if (lote.estado === 'Concluído') {
+        if (diff <= 0) { estado = `Concluído ${Math.abs(diff)}d adiantado`; cor = '#5ecc8a'; }
+        else { estado = `Concluído ${diff}d atrasado`; cor = '#ed9b5a'; }
+    } else {
+        if (diasDecorridos > duracaoPrevista) { estado = `${diasDecorridos}/${duracaoPrevista}d - atrasado`; cor = '#e57373'; }
+        else { estado = `${diasDecorridos}/${duracaoPrevista}d`; cor = 'rgba(255,255,255,0.75)'; }
+    }
+    return `<span style="color:${cor}">${estado}</span>`;
+}
+
+function renderLotes(lotes) {
+    const tbody = document.getElementById('tabelaLotes');
+    tbody.innerHTML = '';
+    lotes.forEach((lote, index) => {
+        let corBadge = 'active';
+        if (lote.estado === 'Comprometido') corBadge = 'warning';
+        if (lote.estado === 'Concluído') corBadge = 'concluded';
+        const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (lote._pendente) tr.style.opacity = '0.55';
+        const idCol = lote._pendente
+            ? '<span style="color:#c9a84c">A sincronizar</span>'
+            : lote._id.substring(lote._id.length - 6).toUpperCase();
+        const progresso = lote._pendente ? '-' : calcularProgressoCiclo(lote);
+        const acoes = lote._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">Pendente...</span>'
+            : `<div class="actions-group">
+                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
+                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
+                </div>`;
+        tr.innerHTML = `
+            <td class="lot-id">${idCol}</td>
+            <td>${lote.ervaAromatica}</td>
+            <td>${lote.planoId?.nome || '-'}</td>
+            <td>${lote.quantidadeAtual}</td>
+            <td>${lote.quantidadeInicial}</td>
+            <td>${dataInicio}</td>
+            <td>${progresso}</td>
+            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
+            <td>${acoes}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -60,37 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectErva.appendChild(option);
     });
 
-    const tbody = document.getElementById('tabelaLotes');
-    tbody.innerHTML = '';
-    dados.dados.forEach((lote, index) => {
-        let corBadge = 'active';
-        if (lote.estado === 'Comprometido') corBadge = 'warning';
-        if (lote.estado === 'Concluído') corBadge = 'concluded';
-        const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
-        const tr = document.createElement('tr');
-        tr.style.animationDelay = `${250 + index * 100}ms`;
-        if (lote._pendente) tr.style.opacity = '0.55';
-        const idCol = lote._pendente
-            ? '<span style="color:#c9a84c">A sincronizar</span>'
-            : lote._id.substring(lote._id.length - 6).toUpperCase();
-        const acoes = lote._pendente
-            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">Pendente...</span>'
-            : `<div class="actions-group">
-                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
-                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
-                </div>`;
-        tr.innerHTML = `
-            <td class="lot-id">${idCol}</td>
-            <td>${lote.ervaAromatica}</td>
-            <td>${lote.planoId?.nome || '-'}</td>
-            <td>${lote.quantidadeAtual}</td>
-            <td>${lote.quantidadeInicial}</td>
-            <td>${dataInicio}</td>
-            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
-            <td>${acoes}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+    renderLotes(dados.dados);
 
     const btnNovoLote = document.getElementById('btnNovoLote');
     const modal = document.getElementById('modalNovoLote');
@@ -316,40 +342,6 @@ if (btnExportar) {
         } catch (err) {
             alert('Sem ligação. Não é possível exportar o relatório offline.');
         }
-    });
-}
-
-function renderLotes(lotes) {
-    const tbody = document.getElementById('tabelaLotes');
-    tbody.innerHTML = '';
-    lotes.forEach((lote, index) => {
-        let corBadge = 'active';
-        if (lote.estado === 'Comprometido') corBadge = 'warning';
-        if (lote.estado === 'Concluído') corBadge = 'concluded';
-        const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
-        const tr = document.createElement('tr');
-        tr.style.animationDelay = `${250 + index * 100}ms`;
-        if (lote._pendente) tr.style.opacity = '0.55';
-        const idCol = lote._pendente
-            ? '<span style="color:#c9a84c">A sincronizar</span>'
-            : lote._id.substring(lote._id.length - 6).toUpperCase();
-        const acoes = lote._pendente
-            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">Pendente...</span>'
-            : `<div class="actions-group">
-                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
-                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
-                </div>`;
-        tr.innerHTML = `
-            <td class="lot-id">${idCol}</td>
-            <td>${lote.ervaAromatica}</td>
-            <td>${lote.planoId?.nome || '-'}</td>
-            <td>${lote.quantidadeAtual}</td>
-            <td>${lote.quantidadeInicial}</td>
-            <td>${dataInicio}</td>
-            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
-            <td>${acoes}</td>
-        `;
-        tbody.appendChild(tr);
     });
 }
 
