@@ -6,11 +6,12 @@ Este é o repositório central do projeto GREENHERB, dividido entre o Frontend (
 
 ## Tecnologias
 
-**Frontend:** HTML5, CSS3, JavaScript (com Web Storage API, IndexedDB e Cache API para suporte offline)
+**Frontend:** HTML5, CSS3, JavaScript (com Web Storage API, IndexedDB, Cache API e Service Worker para suporte offline)
 **Backend:** Node.js, Express
 **Base de Dados:** MongoDB Atlas (Mongoose)
 **Autenticação e Segurança:** JWT (JSON Web Tokens), bcrypt
 **Documentação API:** OpenAPI 3.x (ficheiro api.yaml)
+**Arquitetura de armazenamento no cliente:** documentada em ARQUITETURA.md
 
 ---
 
@@ -35,9 +36,10 @@ programacao-web/
 
 ## Funcionalidades Principais Implementadas
 
-* **Arquitetura Offline-First:** O frontend utiliza IndexedDB (orquestrado em db.js) para armazenar operações pendentes quando não há rede na estufa, sincronizando automaticamente com o backend assim que a conectividade é restabelecida.
-* **Motor de Regras Ambiental:** A submissão de medições ambientais (como temperatura e humidade) valida imediatamente os limites estabelecidos nos planos de cultivo e gera alertas automáticos.
-* **Rastreabilidade e Auditoria:** Operações sensíveis (divisão de lotes, registo de perdas, autorizações) geram um registo inalterável na coleção LogsAuditoria.
+* **Arquitetura Offline-First:** O frontend utiliza IndexedDB (orquestrado em db.js) para armazenar em cache os dados das entidades e enfileirar operações pendentes quando não há rede na estufa, sincronizando automaticamente com o backend assim que a conectividade é restabelecida. Um Service Worker (sw.js) faz cache dos recursos estáticos via Cache API.
+* **Atualização Otimista (Optimistic UI):** As ações realizadas offline (criar lote, planta, plano, tarefa; executar tarefa; resolver/ignorar alerta) refletem-se de imediato na interface, marcadas como "A sincronizar", sem esperar pela rede.
+* **Motor de Regras e Automação:** A submissão de medições ambientais valida os limites estabelecidos no plano de cultivo associado ao lote. Em modo **Manual**, o sistema sugere a ação (alerta); em modo **Automático**, cria automaticamente a tarefa operacional correspondente. Dados incoerentes ou falhas de sensor geram alertas críticos.
+* **Rastreabilidade e Auditoria:** Operações sensíveis (divisão de lotes, registo de perdas, autorizações, gestão de utilizadores) geram um registo na coleção LogsAuditoria, consultável pelo administrador.
 * **Controlo de Acessos Dinâmico:** Middlewares no servidor garantem que perfis não autorizados recebem erro HTTP 403, e o frontend adapta a visualização do DOM mediante o cargo presente no token JWT local.
 
 ---
@@ -79,15 +81,21 @@ Authorization: Bearer <token>
 ### Autenticação e Utilizadores
 | Método | Rota | Acesso | Descrição |
 | --- | --- | --- | --- |
-| POST | /api/auth/register | Administrador | Criar conta de staff |
+| POST | /api/auth/register | Público | Registar conta |
 | POST | /api/auth/login | Público | Iniciar sessão e obter JWT |
-| GET | /api/utilizadores | Administrador | Listar todos os utilizadores |
+| GET | /api/auth/utilizadores | Administrador | Listar todos os utilizadores |
+| POST | /api/auth/utilizadores | Administrador | Criar conta de staff |
+| PATCH | /api/auth/utilizadores/:id/cargo | Administrador | Alterar cargo de um utilizador |
+| DELETE | /api/auth/utilizadores/:id | Administrador | Eliminar utilizador |
+| GET | /api/auth/utilizadores/logs | Administrador | Consultar registos de auditoria |
 
 ### Plantas (Ervas Aromáticas)
 | Método | Rota | Acesso | Descrição |
 | --- | --- | --- | --- |
 | GET | /api/plantas | Todos | Listar catálogo de plantas |
 | POST | /api/plantas | Responsável Técnico, Administrador | Registar nova espécie |
+| POST | /api/plantas/importar | Responsável Técnico, Administrador | Importar plantas via ficheiro CSV |
+| DELETE | /api/plantas/:id | Responsável Técnico, Administrador | Eliminar planta |
 
 ### Planos de Cultivo
 | Método | Rota | Acesso | Descrição |
@@ -103,6 +111,7 @@ Authorization: Bearer <token>
 | POST | /api/lotes | Responsável Técnico, Administrador | Criar novo lote |
 | POST | /api/lotes/:id/dividir | Responsável Técnico, Administrador | Dividir lote em sublotes |
 | POST | /api/lotes/:id/perdas | Técnico, Responsável Técnico, Admin | Registar mortalidade |
+| GET | /api/lotes/exportar | Todos | Exportar relatório de lotes em CSV |
 
 ### Medições Ambientais
 | Método | Rota | Acesso | Descrição |

@@ -8,6 +8,7 @@ const app = express();
 //middleware
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+app.use('/frontend', express.static('frontend'));
 
 const planosRoutes = require('./routes/planosRoutes.js');
 const lotesRoutes = require('./routes/lotesRoutes.js')

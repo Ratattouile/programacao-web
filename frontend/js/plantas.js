@@ -1,3 +1,5 @@
+import { guardarOperacaoPendente, sincronizarPendentes, guardarPlantasCache, obterPlantasCache, adicionarPlantaCache } from './db.js';
+
 let _plantasToken = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -68,16 +70,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('formNovaPlanta').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const body = {
-            nome: document.getElementById('plantaNome').value,
-            especie: document.getElementById('plantaEspecie').value,
-            tempMinima: parseFloat(document.getElementById('plantaTempMin').value),
-            tempMaxima: parseFloat(document.getElementById('plantaTempMax').value),
-            humidadeMinima: parseFloat(document.getElementById('plantaHumMin').value),
-            humidadeMaxima: parseFloat(document.getElementById('plantaHumMax').value),
-            cicloDeVida: parseInt(document.getElementById('plantaCiclo').value),
-            intervaloRega: parseInt(document.getElementById('plantaRega').value)
-        };
 
         const tempMin = parseFloat(document.getElementById('plantaTempMin').value);
         const tempMax = parseFloat(document.getElementById('plantaTempMax').value);
@@ -86,15 +78,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ciclo = parseInt(document.getElementById('plantaCiclo').value);
         const rega = parseInt(document.getElementById('plantaRega').value);
 
-        if (tempMin >= tempMax) {
-            return alert('A temperatura mínima deve ser menor que a máxima.');
-        }
-        if (humMin >= humMax) {
-            return alert('A humidade mínima deve ser menor que a máxima.');
-        }
-        if (ciclo <= 0 || rega <= 0) {
-            return alert('Ciclo de vida e intervalo de rega devem ser maiores que zero.');
-        }
+        if (tempMin >= tempMax) return alert('A temperatura mínima deve ser menor que a máxima.');
+        if (humMin >= humMax) return alert('A humidade mínima deve ser menor que a máxima.');
+        if (ciclo <= 0 || rega <= 0) return alert('Ciclo de vida e intervalo de rega devem ser maiores que zero.');
+
+        const body = {
+            nome: document.getElementById('plantaNome').value,
+            especie: document.getElementById('plantaEspecie').value,
+            tempMinima: tempMin,
+            tempMaxima: tempMax,
+            humidadeMinima: humMin,
+            humidadeMaxima: humMax,
+            cicloDeVida: ciclo,
+            intervaloRega: rega
+        };
 
         try {
             const resposta = await fetch('http://localhost:5000/api/plantas', {
@@ -111,40 +108,58 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert(dados.erro);
             }
         } catch (err) {
-            alert('Erro de ligação ao servidor.');
+            const plantaTemp = { _id: 'temp_' + Date.now(), ...body, _pendente: true };
+            await guardarOperacaoPendente('http://localhost:5000/api/plantas', 'POST', body);
+            await adicionarPlantaCache(plantaTemp);
+            modal.style.display = 'none';
+            e.target.reset();
+            await carregarPlantas();
         }
     });
 });
 
 async function carregarPlantas() {
+    let lista = [];
     try {
         const resposta = await fetch('http://localhost:5000/api/plantas', {
             headers: { 'Authorization': `Bearer ${_plantasToken}` }
         });
         const dados = await resposta.json();
-        const tbody = document.getElementById('tabelaPlantas');
-        tbody.innerHTML = '';
-        dados.dados.forEach((planta, index) => {
-            const tr = document.createElement('tr');
-            tr.style.animationDelay = `${250 + index * 100}ms`;
-            tr.innerHTML = `
-                <td>${planta.nome}</td>
-                <td>${planta.especie}</td>
-                <td>${planta.tempMinima} – ${planta.tempMaxima}</td>
-                <td>${planta.humidadeMinima} – ${planta.humidadeMaxima}</td>
-                <td>${planta.cicloDeVida}</td>
-                <td>${planta.intervaloRega}</td>
-                <td>
-                    <div class="actions-group">
-                        <button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        if (dados.sucesso) {
+            lista = dados.dados;
+            await guardarPlantasCache(lista);
+        } else {
+            throw new Error(dados.erro);
+        }
     } catch (err) {
-        console.error('Erro ao carregar plantas:', err);
+        console.warn('Offline - a ler plantas do cache');
+        lista = await obterPlantasCache();
+        const ud = document.getElementById('userDisplay');
+        if (ud && !ud.innerHTML.includes('Offline')) {
+            ud.innerHTML += ' <span style="color:#c9a84c">(Offline)</span>';
+        }
     }
+
+    const tbody = document.getElementById('tabelaPlantas');
+    tbody.innerHTML = '';
+    lista.forEach((planta, index) => {
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (planta._pendente) tr.style.opacity = '0.55';
+        const acoes = planta._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">A sincronizar</span>'
+            : `<div class="actions-group"><button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button></div>`;
+        tr.innerHTML = `
+            <td>${planta.nome}</td>
+            <td>${planta.especie}</td>
+            <td>${planta.tempMinima} – ${planta.tempMaxima}</td>
+            <td>${planta.humidadeMinima} – ${planta.humidadeMaxima}</td>
+            <td>${planta.cicloDeVida}</td>
+            <td>${planta.intervaloRega}</td>
+            <td>${acoes}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 async function eliminarPlanta(id) {
@@ -158,6 +173,9 @@ async function eliminarPlanta(id) {
         if (dados.sucesso) await carregarPlantas();
         else alert(dados.erro);
     } catch (err) {
-        alert('Erro de ligação ao servidor.');
+        await guardarOperacaoPendente(`http://localhost:5000/api/plantas/${id}`, 'DELETE', null);
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
+
+window.eliminarPlanta = eliminarPlanta;

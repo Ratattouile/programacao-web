@@ -4,7 +4,7 @@ const { registarLog } = require('../utils/auditoria');
 
 exports.listarLotes = async (req, res) => {
     try {
-        const lotes = await Lote.find().populate('planoId', 'nome');
+        const lotes = await Lote.find().populate('planoId', 'nome duracaoCicloPrevista');
         return res.status(200).json({ sucesso: true, dados: lotes });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });
