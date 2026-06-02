@@ -53,6 +53,12 @@ function saudacao(nome) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    if('serviceWorker' in navigator){
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/frontend/sw.js').catch(err => console.error('SW erro:', err));
+        });
+    }
+
     const navAvatar = document.getElementById('navAvatar');
     if (!navAvatar) return;
     const dados = sessionStorage.getItem('utilizadorAcesso');

@@ -1,3 +1,5 @@
+import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -70,7 +72,8 @@ async function resolverAlerta(id) {
         const json = await res.json();
         if (json.sucesso) await carregarAlertas();
     } catch (err) {
-        console.error('Erro ao resolver alerta:', err);
+        await guardarOperacaoPendente(`http://localhost:5000/api/alertas/${id}/resolver`, 'PATCH', null);
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
 
@@ -86,6 +89,7 @@ async function ignorarAlerta(id) {
         const json = await res.json();
         if (json.sucesso) await carregarAlertas();
     } catch (err) {
-        console.error('Erro ao ignorar alerta:', err);
+        await guardarOperacaoPendente(`http://localhost:5000/api/alertas/${id}/ignorar`, 'PATCH', { justificacao });
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }

@@ -1,48 +1,92 @@
-const DB_NAME = 'GreenherbDB'
-const DB_VERSION = 1
+const DB_NAME = 'greenherb-db';
+const DB_VERSION = 1;
 
-
-function initDB(){
+export function abrirDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME,DB_VERSION)
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result
-
-            if(!db.objectStoreNames.contains('lotes')){
-                const objectStore = db.createObjectStore('lotes', {keyPath: 'id'})
-
-                objectStore.transaction.oncomplete = () => {
-                    const loteTx = db.transaction('lotes', 'readwrite').objectStore('lotes')
-                    loteTx.add({id:'L-2023-001', erva:'Manjericão', estado:'Ativo', plano:'Regular'});
-                    loteTx.add({ id: 'L-2023-002', erva: 'Hortelã', estado: 'Comprometido', plano: 'Emergência' });
-                    loteTx.add({ id: 'L-2023-003', erva: 'Alecrim', estado: 'Concluído', plano: 'Regular' });
-                }
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('pendingOps')) {
+                db.createObjectStore('pendingOps', { keyPath: 'id', autoIncrement: true });
             }
-        }
-
-        request.onsuccess = (event)=> resolve(event.target.result);
-        request.onerror = (event) => reject('Erro ao abrir o IndexedDB')
-    })
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
 }
 
+export async function guardarOperacaoPendente(url, method, body) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendingOps', 'readwrite');
+        tx.objectStore('pendingOps').add({ url, method, body, timestamp: Date.now() });
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+    });
+}
 
-function getLotes(){
-    return new Promise(async (resolve, reject) => {
+export async function listarOperacoesPendentes() {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendingOps', 'readonly');
+        const req = tx.objectStore('pendingOps').getAll();
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = reject;
+    });
+}
+
+export async function eliminarOperacaoPendente(id) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendingOps', 'readwrite');
+        tx.objectStore('pendingOps').delete(id);
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+    });
+}
+
+export async function sincronizarPendentes() {
+    const ops = await listarOperacoesPendentes();
+    if (ops.length === 0) return;
+
+    const token = sessionStorage.getItem('token');
+    let algumFalhou = false;
+
+    for (const op of ops) {
         try {
-
-            const db = await initDB()
-            const transaction = db.transaction('lotes', 'readonly')
-            const store = transaction.objectStore('lotes')
-            const request = store.getAll()
-
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-            
-        } catch (error) {
-
-            reject(error)
-            
+            const res = await fetch(op.url, {
+                method: op.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: op.body ? JSON.stringify(op.body) : undefined
+            });
+            if (res.ok) {
+                await eliminarOperacaoPendente(op.id);
+            } else {
+                algumFalhou = true;
+            }
+        } catch {
+            algumFalhou = true;
+            break;
         }
-    })
+    }
+
+    return !algumFalhou;
+}
+
+window.addEventListener('online', async () => {
+    console.log("Conexão restabelecida! A tentar sincronizar...");
+    const sucesso = await sincronizarPendentes();
+    if (sucesso) location.reload();
+});
+
+if (navigator.onLine) {
+    console.log("Página carregada com internet. A verificar pendentes no IndexedDB...");
+    sincronizarPendentes().then(sucesso => {
+        if (sucesso) {
+            console.log("Sincronização de arranque concluída!");
+        }
+    });
 }

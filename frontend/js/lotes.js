@@ -1,4 +1,6 @@
 let loteIdSelecionado = null;
+import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+
 function dividirLote(id) {
     loteIdSelecionado = id;
     document.getElementById('modalDividirLote').style.display = 'flex';
@@ -19,19 +21,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const token = sessionStorage.getItem('token');
-    const resposta = await fetch('http://localhost:5000/api/lotes', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const dados = await resposta.json();
 
-    const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const dadosPlantas = await respostaPlantas.json();
+    let dados = { dados: [] };
+    let dadosPlantas = { dados: [] };
+
+    try {
+        const respostaLotes = await fetch('http://localhost:5000/api/lotes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        dados = await respostaLotes.json();
+
+        const respostaPlantas = await fetch('http://localhost:5000/api/plantas', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        dadosPlantas = await respostaPlantas.json();
+    } catch (err) {
+        console.warn('Offline — a usar dados em cache');
+    }
 
     const selectErva = document.getElementById('loteErva');
     selectErva.innerHTML = '<option value="" disabled selected>Seleciona uma erva...</option>';
-
     dadosPlantas.dados.forEach(planta => {
         const option = document.createElement('option');
         option.value = planta.nome;
@@ -39,17 +48,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectErva.appendChild(option);
     });
 
-
     const tbody = document.getElementById('tabelaLotes');
     tbody.innerHTML = '';
-
     dados.dados.forEach((lote, index) => {
         let corBadge = 'active';
         if (lote.estado === 'Comprometido') corBadge = 'warning';
         if (lote.estado === 'Concluído') corBadge = 'concluded';
-
         const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
-
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${250 + index * 100}ms`;
         tr.innerHTML = `
@@ -75,17 +80,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnFechar = document.getElementById('btnFecharModal');
 
     btnNovoLote.addEventListener('click', async () => {
-        const resposta = await fetch('http://localhost:5000/api/planos', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const dados = await resposta.json();
-        const select = document.getElementById('lotePlano');
-        select.innerHTML = '';
-        dados.dados.forEach(p => {
-            select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
-
-        });
-        modal.style.display = 'flex';
+        try {
+            const resposta = await fetch('http://localhost:5000/api/planos', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const dados = await resposta.json();
+            const select = document.getElementById('lotePlano');
+            select.innerHTML = '';
+            dados.dados.forEach(p => {
+                select.innerHTML += `<option value="${p._id}">${p.nome}</option>`;
+            });
+            modal.style.display = 'flex';
+        } catch (err) {
+            alert('Sem ligação. Não é possível criar lotes offline sem lista de planos.');
+        }
     });
 
     btnFechar.addEventListener('click', () => modal.style.display = 'none');
@@ -96,18 +104,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         const planoId = document.getElementById('lotePlano').value;
         const quantidadeInicial = parseInt(document.getElementById('loteQuantidade').value);
 
-        const resposta = await fetch('http://localhost:5000/api/lotes', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ervaAromatica, planoId, quantidadeInicial })
-        });
+        if (quantidadeInicial <= 0) {
+            return alert('A quantidade inicial deve ser maior que zero.');
+        }
 
-        const dados = await resposta.json();
-        if (dados.sucesso) {
+        try {
+            const resposta = await fetch('http://localhost:5000/api/lotes', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ervaAromatica, planoId, quantidadeInicial })
+            });
+            const dados = await resposta.json();
+            if (dados.sucesso) {
+                modal.style.display = 'none';
+                location.reload();
+            } else {
+                alert(dados.erro);
+            }
+        } catch (err) {
+            await guardarOperacaoPendente('http://localhost:5000/api/lotes', 'POST', { ervaAromatica, planoId, quantidadeInicial });
+            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
             modal.style.display = 'none';
-            location.reload();
-        } else {
-            alert(dados.erro);
         }
     });
 
@@ -123,22 +140,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             return alert('A quantidade a separar deve ser maior que zero.');
         }
 
-        const resposta = await fetch(`http://localhost:5000/api/lotes/${loteIdSelecionado}/dividir`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quantidadeSeparar })
-        });
-
-        const dados = await resposta.json();
-        if (dados.sucesso) {
+        try {
+            const resposta = await fetch(`http://localhost:5000/api/lotes/${loteIdSelecionado}/dividir`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quantidadeSeparar })
+            });
+            const dados = await resposta.json();
+            if (dados.sucesso) {
+                document.getElementById('modalDividirLote').style.display = 'none';
+                location.reload();
+            } else {
+                alert(dados.erro);
+            }
+        } catch (err) {
+            await guardarOperacaoPendente(`http://localhost:5000/api/lotes/${loteIdSelecionado}/dividir`, 'POST', { quantidadeSeparar });
+            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
             document.getElementById('modalDividirLote').style.display = 'none';
-            location.reload();
-        } else {
-            alert(dados.erro);
         }
     });
 });
-
 
 const modalSensores = document.getElementById('modalSensores');
 const btnFecharSensores = document.getElementById('btnFecharModalSensores');
@@ -151,7 +172,6 @@ if (btnFecharSensores) {
 async function abrirModalSensores(loteId, ervaAromatica) {
     document.getElementById('sensorLoteId').value = loteId;
     document.getElementById('sensoresLoteNome').textContent = `Lote de ${ervaAromatica}`;
-
     tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">A carregar dados...</td></tr>';
     modalSensores.style.display = 'flex';
 
@@ -164,9 +184,7 @@ async function abrirModalSensores(loteId, ervaAromatica) {
 
         if (dados.sucesso) {
             const medicoesDesteLote = dados.dados.filter(m => m.loteId && m.loteId._id === loteId);
-
             tabelaHistorico.innerHTML = '';
-
             if (medicoesDesteLote.length === 0) {
                 tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sem medições registadas.</td></tr>';
             } else {
@@ -178,20 +196,18 @@ async function abrirModalSensores(loteId, ervaAromatica) {
                         <td>${medicao.temperatura} ºC</td>
                         <td>${medicao.humidade} %</td>
                         <td>${medicao.luminosidade} lx</td>
-                        
                     `;
                     tabelaHistorico.appendChild(tr);
                 });
             }
         }
     } catch (err) {
-        tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center; color: #ff6b6b;">Erro ao carregar histórico.</td></tr>';
+        tabelaHistorico.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff6b6b;">Erro ao carregar histórico.</td></tr>';
     }
 }
 
 document.getElementById('formSimularMedicao').addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const token = sessionStorage.getItem('token');
     const loteId = document.getElementById('sensorLoteId').value;
     const temperatura = document.getElementById('simTemp').value;
@@ -201,33 +217,30 @@ document.getElementById('formSimularMedicao').addEventListener('submit', async (
     if (temperatura === '' || humidade === '' || luminosidade === '') {
         return alert('Preenche todos os campos da medição.');
     }
-    if (humidade < 0 || humidade > 100) {
+    if (Number(humidade) < 0 || Number(humidade) > 100) {
         return alert('A humidade deve estar entre 0% e 100%.');
     }
-    if (luminosidade < 0) {
+    if (Number(luminosidade) < 0) {
         return alert('A luminosidade não pode ser negativa.');
     }
 
     try {
         const resposta = await fetch('http://localhost:5000/api/medicoes', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ loteId, temperatura, humidade, luminosidade })
         });
-
         const dados = await resposta.json();
         if (dados.sucesso) {
             document.getElementById('formSimularMedicao').reset();
             const erva = document.getElementById('sensoresLoteNome').textContent.replace('Lote de ', '');
             abrirModalSensores(loteId, erva);
         } else {
-            alert("Erro ao enviar leitura: " + dados.erro);
+            alert('Erro ao enviar leitura: ' + dados.erro);
         }
     } catch (err) {
-        alert("Erro de comunicação com o servidor.");
+        await guardarOperacaoPendente('http://localhost:5000/api/medicoes', 'POST', { loteId, temperatura, humidade, luminosidade });
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 });
 
@@ -239,11 +252,8 @@ if (btnExportar) {
             const resposta = await fetch('http://localhost:5000/api/lotes/exportar', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-
-            // Converte a resposta num Ficheiro (Blob)
             const blob = await resposta.blob();
             const url = window.URL.createObjectURL(blob);
-
             const a = document.createElement('a');
             a.href = url;
             a.download = 'Relatorio_Lotes_GreenHerb.csv';
@@ -251,7 +261,7 @@ if (btnExportar) {
             a.click();
             a.remove();
         } catch (err) {
-            alert("Erro ao exportar ficheiro.");
+            alert('Sem ligação. Não é possível exportar o relatório offline.');
         }
     });
 }

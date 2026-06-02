@@ -1,3 +1,5 @@
+import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -34,16 +36,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             password: document.getElementById('uPassword').value,
             cargo: document.getElementById('uCargo').value
         };
-        const res = await fetch('http://localhost:5000/api/auth/utilizadores', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(body)
-        });
-        const json = await res.json();
-        if (!json.sucesso) { alert(json.erro); return; }
-        modalNovo.style.display = 'none';
-        e.target.reset();
-        await carregarUtilizadores();
+        try {
+            const res = await fetch('http://localhost:5000/api/auth/utilizadores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
+            });
+            const json = await res.json();
+            if (!json.sucesso) { alert(json.erro); return; }
+            modalNovo.style.display = 'none';
+            e.target.reset();
+            await carregarUtilizadores();
+        } catch (err) {
+            alert('Sem ligação ao servidor.');
+        }
     });
 
     const modalEditar = document.getElementById('modalEditarCargo');
@@ -54,15 +60,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         const token = sessionStorage.getItem('token');
         const id = document.getElementById('editCargoId').value;
         const cargo = document.getElementById('editCargo').value;
-        const res = await fetch(`http://localhost:5000/api/auth/utilizadores/${id}/cargo`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ cargo })
-        });
-        const json = await res.json();
-        if (!json.sucesso) { alert(json.erro); return; }
-        modalEditar.style.display = 'none';
-        await carregarUtilizadores();
+        try {
+            const res = await fetch(`http://localhost:5000/api/auth/utilizadores/${id}/cargo`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ cargo })
+            });
+            const json = await res.json();
+            if (!json.sucesso) { alert(json.erro); return; }
+            modalEditar.style.display = 'none';
+            await carregarUtilizadores();
+        } catch (err) {
+            alert('Sem ligação ao servidor.');
+        }
     });
 
     const modalEliminar = document.getElementById('modalEliminar');
@@ -71,39 +81,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function carregarUtilizadores() {
     const token = sessionStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/auth/utilizadores', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const { dados: utilizadores } = await res.json();
-    if (!utilizadores) return;
+    try {
+        const res = await fetch('http://localhost:5000/api/auth/utilizadores', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const { dados: utilizadores } = await res.json();
+        if (!utilizadores) return;
 
-    animarContador(document.getElementById('statTotal'), utilizadores.length);
-    animarContador(document.getElementById('statAdmins'), utilizadores.filter(u => u.cargo === 'Administrador').length);
-    animarContador(document.getElementById('statTecnicos'), utilizadores.filter(u => u.cargo === 'Técnico').length);
-    animarContador(document.getElementById('statResp'), utilizadores.filter(u => u.cargo === 'Responsavel Tecnico').length);
-    animarContador(document.getElementById('contUtilizadores'), utilizadores.length);
+        animarContador(document.getElementById('statTotal'), utilizadores.length);
+        animarContador(document.getElementById('statAdmins'), utilizadores.filter(u => u.cargo === 'Administrador').length);
+        animarContador(document.getElementById('statTecnicos'), utilizadores.filter(u => u.cargo === 'Técnico').length);
+        animarContador(document.getElementById('statResp'), utilizadores.filter(u => u.cargo === 'Responsavel Tecnico').length);
+        animarContador(document.getElementById('contUtilizadores'), utilizadores.length);
 
-    const tbody = document.getElementById('tabelaUtilizadores');
-    tbody.innerHTML = '';
-    utilizadores.forEach((u, index) => {
-        const dataRegisto = new Date(u.dataRegisto).toLocaleDateString('pt-PT');
-        const tr = document.createElement('tr');
-        tr.style.animationDelay = `${250 + index * 100}ms`;
-        tr.innerHTML = `
-            <td>${u.nome}</td>
-            <td class="lot-id">${u.username}</td>
-            <td><span class="badge ${badgeClass(u.cargo)}">${u.cargo}</span></td>
-            <td>${dataRegisto}</td>
-            <td>
-                <div class="actions-group">
-                    <button class="btn-action blue" onclick="abrirLogs('${u._id}', '${u.nome}')">Ver Logs</button>
-                    <button class="btn-action green" onclick="abrirEditarCargo('${u._id}', '${u.nome}', '${u.cargo}')">Editar Cargo</button>
-                    <button class="btn-action ghost" onclick="abrirEliminar('${u._id}', '${u.nome}')">Eliminar</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+        const tbody = document.getElementById('tabelaUtilizadores');
+        tbody.innerHTML = '';
+        utilizadores.forEach((u, index) => {
+            const dataRegisto = new Date(u.dataRegisto).toLocaleDateString('pt-PT');
+            const tr = document.createElement('tr');
+            tr.style.animationDelay = `${250 + index * 100}ms`;
+            tr.innerHTML = `
+                <td>${u.nome}</td>
+                <td class="lot-id">${u.username}</td>
+                <td><span class="badge ${badgeClass(u.cargo)}">${u.cargo}</span></td>
+                <td>${dataRegisto}</td>
+                <td>
+                    <div class="actions-group">
+                        <button class="btn-action blue" onclick="abrirLogs('${u._id}', '${u.nome}')">Ver Logs</button>
+                        <button class="btn-action green" onclick="abrirEditarCargo('${u._id}', '${u.nome}', '${u.cargo}')">Editar Cargo</button>
+                        <button class="btn-action ghost" onclick="abrirEliminar('${u._id}', '${u.nome}')">Eliminar</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Erro ao carregar utilizadores:', err);
+    }
 }
 
 function badgeClass(cargo) {
@@ -126,14 +140,18 @@ function abrirEliminar(id, nome) {
 
     document.getElementById('btnConfirmarEliminar').onclick = async () => {
         const token = sessionStorage.getItem('token');
-        const res = await fetch(`http://localhost:5000/api/auth/utilizadores/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const json = await res.json();
-        if (!json.sucesso) { alert(json.erro); return; }
-        document.getElementById('modalEliminar').style.display = 'none';
-        await carregarUtilizadores();
+        try {
+            const res = await fetch(`http://localhost:5000/api/auth/utilizadores/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const json = await res.json();
+            if (!json.sucesso) { alert(json.erro); return; }
+            document.getElementById('modalEliminar').style.display = 'none';
+            await carregarUtilizadores();
+        } catch (err) {
+            alert('Sem ligação ao servidor.');
+        }
     };
 }
 
@@ -143,29 +161,32 @@ async function abrirLogs(utilizadorId, nome) {
     document.getElementById('listaLogs').innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px">A carregar...</p>';
     document.getElementById('modalLogs').style.display = 'flex';
 
-    const res = await fetch(`http://localhost:5000/api/auth/utilizadores/logs?utilizador=${utilizadorId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const { dados: logs } = await res.json();
+    try {
+        const res = await fetch(`http://localhost:5000/api/auth/utilizadores/logs?utilizador=${utilizadorId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const { dados: logs } = await res.json();
+        const lista = document.getElementById('listaLogs');
 
-    const lista = document.getElementById('listaLogs');
+        if (!logs || !logs.length) {
+            lista.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:1rem">Sem atividade registada</p>';
+            return;
+        }
 
-    if (!logs || !logs.length) {
-        lista.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:1rem">Sem atividade registada</p>';
-        return;
+        lista.innerHTML = logs.map(l => {
+            const data = new Date(l.dataRegisto).toLocaleString('pt-PT');
+            return `
+                <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:0.5px solid rgba(255,255,255,0.05)">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#c9a84c;margin-top:6px;flex-shrink:0"></div>
+                    <div>
+                        <div style="font-size:14px;color:rgba(255,255,255,0.85);font-weight:500">${l.acao}</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">${l.detalhes}</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:3px">${data}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (err) {
+        document.getElementById('listaLogs').innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:1rem">Erro ao carregar logs.</p>';
     }
-
-    lista.innerHTML = logs.map(l => {
-        const data = new Date(l.dataRegisto).toLocaleString('pt-PT');
-        return `
-        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:0.5px solid rgba(255,255,255,0.05)">
-            <div style="width:7px;height:7px;border-radius:50%;background:#c9a84c;margin-top:6px;flex-shrink:0"></div>
-            <div>
-                <div style="font-size:14px;color:rgba(255,255,255,0.85);font-weight:500">${l.acao}</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">${l.detalhes}</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:3px">${data}</div>
-            </div>
-        </div>
-    `;
-    }).join('');
 }

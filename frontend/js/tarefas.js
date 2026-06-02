@@ -1,3 +1,5 @@
+import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -66,7 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert(dados.erro);
             }
         } catch (err) {
-            alert('Erro de ligação ao servidor.');
+            await guardarOperacaoPendente('http://localhost:5000/api/tarefas', 'POST', body);
+            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+            modal.style.display = 'none';
         }
     });
 });
@@ -134,6 +138,7 @@ async function executarTarefa(id) {
         });
         await carregarTarefas(token);
     } catch (err) {
-        alert('Erro ao executar tarefa.');
+        await guardarOperacaoPendente(`http://localhost:5000/api/tarefas/${id}/executar`, 'PATCH', null);
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }

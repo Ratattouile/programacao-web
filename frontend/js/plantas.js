@@ -1,4 +1,5 @@
 let _plantasToken = null;
+import { guardarOperacaoPendente, sincronizarPendentes } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -68,16 +69,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('formNovaPlanta').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const body = {
-            nome: document.getElementById('plantaNome').value,
-            especie: document.getElementById('plantaEspecie').value,
-            tempMinima: parseFloat(document.getElementById('plantaTempMin').value),
-            tempMaxima: parseFloat(document.getElementById('plantaTempMax').value),
-            humidadeMinima: parseFloat(document.getElementById('plantaHumMin').value),
-            humidadeMaxima: parseFloat(document.getElementById('plantaHumMax').value),
-            cicloDeVida: parseInt(document.getElementById('plantaCiclo').value),
-            intervaloRega: parseInt(document.getElementById('plantaRega').value)
-        };
 
         const tempMin = parseFloat(document.getElementById('plantaTempMin').value);
         const tempMax = parseFloat(document.getElementById('plantaTempMax').value);
@@ -86,15 +77,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ciclo = parseInt(document.getElementById('plantaCiclo').value);
         const rega = parseInt(document.getElementById('plantaRega').value);
 
-        if (tempMin >= tempMax) {
-            return alert('A temperatura mínima deve ser menor que a máxima.');
-        }
-        if (humMin >= humMax) {
-            return alert('A humidade mínima deve ser menor que a máxima.');
-        }
-        if (ciclo <= 0 || rega <= 0) {
-            return alert('Ciclo de vida e intervalo de rega devem ser maiores que zero.');
-        }
+        if (tempMin >= tempMax) return alert('A temperatura mínima deve ser menor que a máxima.');
+        if (humMin >= humMax) return alert('A humidade mínima deve ser menor que a máxima.');
+        if (ciclo <= 0 || rega <= 0) return alert('Ciclo de vida e intervalo de rega devem ser maiores que zero.');
+
+        const body = {
+            nome: document.getElementById('plantaNome').value,
+            especie: document.getElementById('plantaEspecie').value,
+            tempMinima: tempMin,
+            tempMaxima: tempMax,
+            humidadeMinima: humMin,
+            humidadeMaxima: humMax,
+            cicloDeVida: ciclo,
+            intervaloRega: rega
+        };
 
         try {
             const resposta = await fetch('http://localhost:5000/api/plantas', {
@@ -111,7 +107,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert(dados.erro);
             }
         } catch (err) {
-            alert('Erro de ligação ao servidor.');
+            await guardarOperacaoPendente('http://localhost:5000/api/plantas', 'POST', body);
+            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+            modal.style.display = 'none';
         }
     });
 });
@@ -158,6 +156,7 @@ async function eliminarPlanta(id) {
         if (dados.sucesso) await carregarPlantas();
         else alert(dados.erro);
     } catch (err) {
-        alert('Erro de ligação ao servidor.');
+        await guardarOperacaoPendente(`http://localhost:5000/api/plantas/${id}`, 'DELETE', null);
+        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
     }
 }
