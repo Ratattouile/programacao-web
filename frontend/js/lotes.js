@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes, guardarLotesCache, obterLotesCache, guardarPlantasCache, obterPlantasCache, guardarPlanosCache, obterPlanosCache, guardarMedicoesCache, obterMedicoesCache } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarLotesCache, obterLotesCache, guardarPlantasCache, obterPlantasCache, guardarPlanosCache, obterPlanosCache, guardarMedicoesCache, obterMedicoesCache, adicionarLoteCache } from './db.js';
 
 let loteIdSelecionado = null;
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         dados = await respostaLotes.json();
         if (dados.sucesso) await guardarLotesCache(dados.dados);
     } catch (err) {
-        console.warn('Offline — a ler lotes do cache');
+        console.warn('Offline - a ler lotes do cache');
         dados = { dados: await obterLotesCache() };
         const ud = document.getElementById('userDisplay');
         if (ud && !ud.innerHTML.includes('Offline')) {
@@ -69,20 +69,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (lote._pendente) tr.style.opacity = '0.55';
+        const idCol = lote._pendente
+            ? '<span style="color:#c9a84c">A sincronizar</span>'
+            : lote._id.substring(lote._id.length - 6).toUpperCase();
+        const acoes = lote._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">Pendente...</span>'
+            : `<div class="actions-group">
+                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
+                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
+                </div>`;
         tr.innerHTML = `
-            <td class="lot-id">${lote._id.substring(lote._id.length - 6).toUpperCase()}</td>
+            <td class="lot-id">${idCol}</td>
             <td>${lote.ervaAromatica}</td>
             <td>${lote.planoId?.nome || '-'}</td>
             <td>${lote.quantidadeAtual}</td>
             <td>${lote.quantidadeInicial}</td>
             <td>${dataInicio}</td>
             <td><span class="badge ${corBadge}">${lote.estado}</span></td>
-            <td>
-                <div class="actions-group">
-                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
-                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
-                </div>
-            </td>
+            <td>${acoes}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -140,9 +145,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert(dados.erro);
             }
         } catch (err) {
+            const loteTemp = {
+                _id: 'temp_' + Date.now(),
+                ervaAromatica,
+                quantidadeInicial,
+                quantidadeAtual: quantidadeInicial,
+                estado: 'Ativo',
+                dataInicio: new Date().toISOString(),
+                planoId: null,
+                _pendente: true
+            };
             await guardarOperacaoPendente('http://localhost:5000/api/lotes', 'POST', { ervaAromatica, planoId, quantidadeInicial });
-            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+            await adicionarLoteCache(loteTemp);
             modal.style.display = 'none';
+            const lotesCache = await obterLotesCache();
+            renderLotes(lotesCache);
         }
     });
 
@@ -231,11 +248,11 @@ async function abrirModalSensores(loteId, ervaAromatica) {
                 const dataFormatada = new Date(medicao.dataRegisto).toLocaleString('pt-PT', { dateStyle: 'short', timeStyle: 'short' });
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                <td>${dataFormatada}</td>
-                <td>${medicao.temperatura} ºC</td>
-                <td>${medicao.humidade} %</td>
-                <td>${medicao.luminosidade} lx</td>
-            `;
+                    <td>${dataFormatada}</td>
+                    <td>${medicao.temperatura} ºC</td>
+                    <td>${medicao.humidade} %</td>
+                    <td>${medicao.luminosidade} lx</td>
+                `;
                 tabelaHistorico.appendChild(tr);
             });
         }
@@ -299,6 +316,40 @@ if (btnExportar) {
         } catch (err) {
             alert('Sem ligação. Não é possível exportar o relatório offline.');
         }
+    });
+}
+
+function renderLotes(lotes) {
+    const tbody = document.getElementById('tabelaLotes');
+    tbody.innerHTML = '';
+    lotes.forEach((lote, index) => {
+        let corBadge = 'active';
+        if (lote.estado === 'Comprometido') corBadge = 'warning';
+        if (lote.estado === 'Concluído') corBadge = 'concluded';
+        const dataInicio = new Date(lote.dataInicio).toLocaleDateString('pt-PT');
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (lote._pendente) tr.style.opacity = '0.55';
+        const idCol = lote._pendente
+            ? '<span style="color:#c9a84c">A sincronizar</span>'
+            : lote._id.substring(lote._id.length - 6).toUpperCase();
+        const acoes = lote._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">Pendente...</span>'
+            : `<div class="actions-group">
+                    <button class="btn-action ghost" onclick="dividirLote('${lote._id}')">Dividir</button>
+                    <button class="btn-action ghost" onclick="abrirModalSensores('${lote._id}', '${lote.ervaAromatica}')">Medição</button>
+                </div>`;
+        tr.innerHTML = `
+            <td class="lot-id">${idCol}</td>
+            <td>${lote.ervaAromatica}</td>
+            <td>${lote.planoId?.nome || '-'}</td>
+            <td>${lote.quantidadeAtual}</td>
+            <td>${lote.quantidadeInicial}</td>
+            <td>${dataInicio}</td>
+            <td><span class="badge ${corBadge}">${lote.estado}</span></td>
+            <td>${acoes}</td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 

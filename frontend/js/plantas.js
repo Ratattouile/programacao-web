@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes, guardarPlantasCache, obterPlantasCache } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarPlantasCache, obterPlantasCache, adicionarPlantaCache } from './db.js';
 
 let _plantasToken = null;
 
@@ -108,9 +108,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert(dados.erro);
             }
         } catch (err) {
+            const plantaTemp = { _id: 'temp_' + Date.now(), ...body, _pendente: true };
             await guardarOperacaoPendente('http://localhost:5000/api/plantas', 'POST', body);
-            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+            await adicionarPlantaCache(plantaTemp);
             modal.style.display = 'none';
+            e.target.reset();
+            await carregarPlantas();
         }
     });
 });
@@ -129,7 +132,7 @@ async function carregarPlantas() {
             throw new Error(dados.erro);
         }
     } catch (err) {
-        console.warn('Offline — a ler plantas do cache');
+        console.warn('Offline - a ler plantas do cache');
         lista = await obterPlantasCache();
         const ud = document.getElementById('userDisplay');
         if (ud && !ud.innerHTML.includes('Offline')) {
@@ -142,6 +145,10 @@ async function carregarPlantas() {
     lista.forEach((planta, index) => {
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (planta._pendente) tr.style.opacity = '0.55';
+        const acoes = planta._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">A sincronizar</span>'
+            : `<div class="actions-group"><button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button></div>`;
         tr.innerHTML = `
             <td>${planta.nome}</td>
             <td>${planta.especie}</td>
@@ -149,11 +156,7 @@ async function carregarPlantas() {
             <td>${planta.humidadeMinima} – ${planta.humidadeMaxima}</td>
             <td>${planta.cicloDeVida}</td>
             <td>${planta.intervaloRega}</td>
-            <td>
-                <div class="actions-group">
-                    <button class="btn-action red" onclick="eliminarPlanta('${planta._id}')">Eliminar</button>
-                </div>
-            </td>
+            <td>${acoes}</td>
         `;
         tbody.appendChild(tr);
     });

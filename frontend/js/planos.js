@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes, guardarPlanosCache, obterPlanosCache, guardarPlantasCache, obterPlantasCache } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarPlanosCache, obterPlanosCache, guardarPlantasCache, obterPlantasCache, adicionarPlanoCache, atualizarItemCache } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         dados = await resposta.json();
         if (dados.sucesso) await guardarPlanosCache(dados.dados);
     } catch (err) {
-        console.warn('Offline — a ler planos do cache');
+        console.warn('Offline - a ler planos do cache');
         dados = { dados: await obterPlanosCache() };
         const ud = document.getElementById('userDisplay');
         if (ud && !ud.innerHTML.includes('Offline')) {
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const selectErva = document.getElementById('planoErva');
     selectErva.innerHTML = '<option value="" disabled selected>Seleciona uma erva...</option>';
-    if (dadosPlantas.sucesso && dadosPlantas.dados) {
+    if (dadosPlantas.dados) {
         dadosPlantas.dados.forEach(planta => {
             const option = document.createElement('option');
             option.value = planta.nome;
@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${250 + index * 100}ms`;
+        if (plano._pendente) tr.style.opacity = '0.55';
+        const acoes = plano._pendente
+            ? '<span style="color:rgba(255,255,255,0.3);font-size:12px">A sincronizar</span>'
+            : `<div class="actions-group">${plano.estadoAutorizacao === 'Pendente' ? `<button class="btn-action blue" onclick="autorizarPlano('${plano._id}')">Autorizar</button>` : ''}</div>`;
         tr.innerHTML = `
             <td>${plano.nome}</td>
             <td>${plano.ervaAromatica}</td>
@@ -84,11 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td>${plano.modoAutomacao || plano.automacao || 'Manual'}</td>
             <td>${detalhesTexto}</td>
             <td style="${corEstado} font-weight: 500;">${plano.estadoAutorizacao}</td>
-            <td>
-                <div class="actions-group">
-                    ${plano.estadoAutorizacao === 'Pendente' ? `<button class="btn-action blue" onclick="autorizarPlano('${plano._id}')">Autorizar</button>` : ''}
-                </div>
-            </td>
+            <td>${acoes}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -167,9 +167,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert('Erro ao criar: ' + dadosForm.erro);
             }
         } catch (err) {
+            const planoTemp = { _id: 'temp_' + Date.now(), ...payload, estadoAutorizacao: 'Pendente', _pendente: true };
             await guardarOperacaoPendente('http://localhost:5000/api/planos', 'POST', payload);
-            alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+            await adicionarPlanoCache(planoTemp);
             modal.style.display = 'none';
+            location.reload();
         }
     });
 });
@@ -189,7 +191,8 @@ async function autorizarPlano(id) {
         }
     } catch (err) {
         await guardarOperacaoPendente(`http://localhost:5000/api/planos/${id}/autorizar`, 'PATCH', null);
-        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+        await atualizarItemCache('planos', id, { estadoAutorizacao: 'Aprovado', _pendente: true });
+        location.reload();
     }
 }
 

@@ -1,5 +1,5 @@
 const DB_NAME = 'greenherb-db';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export function abrirDB() {
     return new Promise((resolve, reject) => {
@@ -105,6 +105,34 @@ function obterCache(store) {
     }));
 }
 
+async function adicionarItemCache(store, item) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(store, 'readwrite');
+        tx.objectStore(store).put(item);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+export async function atualizarItemCache(store, id, alteracoes) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(store, 'readwrite');
+        const os = tx.objectStore(store);
+        const req = os.get(id);
+        req.onsuccess = () => {
+            const item = req.result;
+            if (item) {
+                Object.assign(item, alteracoes);
+                os.put(item);
+            }
+        };
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
 export const guardarLotesCache = (l) => guardarCache('lotes', l);
 export const obterLotesCache = () => obterCache('lotes');
 export const guardarPlantasCache = (l) => guardarCache('plantas', l);
@@ -117,9 +145,31 @@ export const guardarTarefasCache = (l) => guardarCache('tarefas', l);
 export const obterTarefasCache = () => obterCache('tarefas');
 export const guardarAlertasCache = (l) => guardarCache('alertas', l);
 export const obterAlertasCache = () => obterCache('alertas');
+export const adicionarLoteCache = (i) => adicionarItemCache('lotes', i);
+export const adicionarPlantaCache = (i) => adicionarItemCache('plantas', i);
+export const adicionarPlanoCache = (i) => adicionarItemCache('planos', i);
+export const adicionarTarefaCache = (i) => adicionarItemCache('tarefas', i);
+export const adicionarMedicaoCache = (i) => adicionarItemCache('medicoes', i);
+export const atualizarTarefaCache = (id, alt) => atualizarItemCache('tarefas', id, alt);
+export const atualizarAlertaCache = (id, alt) => atualizarItemCache('alertas', id, alt);
+export const atualizarLoteCache = (id, alt) => atualizarItemCache('lotes', id, alt);
 
 window.addEventListener('online', async () => {
-    console.log("Conexão restabelecida! A tentar sincronizar...");
+    console.log("Evento online disparado! A sincronizar...");
     const sucesso = await sincronizarPendentes();
     if (sucesso) location.reload();
 });
+
+(async () => {
+    const pendentes = await listarOperacoesPendentes();
+    if (pendentes.length === 0) return;
+    console.log(`${pendentes.length} operações pendentes. A tentar sincronizar...`);
+    const sucesso = await sincronizarPendentes();
+    if (sucesso) {
+        const restantes = await listarOperacoesPendentes();
+        if (restantes.length === 0) {
+            console.log("Sincronização concluída!");
+            location.reload();
+        }
+    }
+})();

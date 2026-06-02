@@ -1,4 +1,4 @@
-import { guardarOperacaoPendente, sincronizarPendentes, guardarAlertasCache, obterAlertasCache } from './db.js';
+import { guardarOperacaoPendente, sincronizarPendentes, guardarAlertasCache, obterAlertasCache, atualizarAlertaCache } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
@@ -80,7 +80,8 @@ async function resolverAlerta(id) {
         if (json.sucesso) await carregarAlertas();
     } catch (err) {
         await guardarOperacaoPendente(`http://localhost:5000/api/alertas/${id}/resolver`, 'PATCH', null);
-        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+        await atualizarAlertaCache(id, { estado: 'Resolvido', _pendente: true });
+        await carregarAlertas();
     }
 }
 
@@ -97,7 +98,8 @@ async function ignorarAlerta(id) {
         if (json.sucesso) await carregarAlertas();
     } catch (err) {
         await guardarOperacaoPendente(`http://localhost:5000/api/alertas/${id}/ignorar`, 'PATCH', { justificacao });
-        alert('Sem ligação. A operação será enviada automaticamente quando estiveres online.');
+        await atualizarAlertaCache(id, { estado: 'Ignorado', justificacao, _pendente: true });
+        await carregarAlertas();
     }
 }
 
