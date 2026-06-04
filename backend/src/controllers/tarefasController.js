@@ -21,7 +21,7 @@ exports.criarTarefas = async (req, res) => {
 
     try {
         const novaTarefa = await Tarefa.create({ tipo, loteId, responsavel, prazoLimite });
-        await registarLog(req, 'Criou Tarefa', `Tarefa concluída | Tipo: ${tarefa.tipo} | Lote: ${tarefa.loteId}`);
+        await registarLog(req, 'Criou Tarefa', `Tarefa concluída | Tipo: ${novaTarefa.tipo} | Lote: ${novaTarefa.loteId}`);
         return res.status(201).json({ sucesso: true, mensagem: "Tarefa criada com sucesso", dados: novaTarefa });
     } catch (err) {
         return res.status(500).json({ sucesso: false, erro: err.message });

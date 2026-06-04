@@ -1,7 +1,6 @@
 import { guardarOperacaoPendente, sincronizarPendentes, guardarPlantasCache, obterPlantasCache, adicionarPlantaCache } from './db.js';
 
 let _plantasToken = null;
-
 document.addEventListener('DOMContentLoaded', async () => {
     const utilizadorAcesso = sessionStorage.getItem('utilizadorAcesso');
     if (!utilizadorAcesso) { window.location.href = '/frontend/views/login.html'; return; }
@@ -19,48 +18,55 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!document.getElementById('btnImportarCSV')) return;
 
-    document.getElementById('btnImportarCSV').addEventListener('click', async () => {
-        const inputFicheiro = document.getElementById('ficheiroCSV');
-        if (inputFicheiro.files.length === 0) {
-            return alert('Por favor, escolha um ficheiro CSV primeiro!');
+document.getElementById('btnImportarCSV').addEventListener('click', async (e) => {
+    e.preventDefault(); 
+    console.log("O botão foi clicado e o preventDefault funcionou!");
+    const inputFicheiro = document.getElementById('ficheiroCSV');
+    if (inputFicheiro.files.length === 0) {
+        return alert('Por favor, escolha um ficheiro CSV primeiro!');
+    }
+
+    const formData = new FormData();
+    formData.append('ficheiro', inputFicheiro.files[0]);
+
+    try {
+        const resposta = await fetch('http://localhost:5000/api/plantas/importar', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${_plantasToken}` },
+            body: formData
+        });
+
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+            alert('Sucesso! ' + dados.mensagem);
+            inputFicheiro.value = '';
+            document.getElementById('fileLabel').textContent = 'Selecionar ficheiro .csv';
+            document.getElementById('fileDropZone').classList.remove('has-file');
+            
+            await carregarPlantas(); 
+        } else {
+            alert('Erro na importação: ' + dados.erro);
         }
-        const formData = new FormData();
-        formData.append('ficheiro', inputFicheiro.files[0]);
-        try {
-            const resposta = await fetch('http://localhost:5000/api/plantas/importar', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${_plantasToken}` },
-                body: formData
-            });
-            const dados = await resposta.json();
-            if (dados.sucesso) {
-                alert('Sucesso! ' + dados.mensagem);
-                inputFicheiro.value = '';
-                document.getElementById('fileLabel').textContent = 'Selecionar ficheiro .csv';
-                document.getElementById('fileDropZone').classList.remove('has-file');
-                await carregarPlantas();
-            } else {
-                alert('Erro na importação: ' + dados.erro);
-            }
-        } catch (err) {
-            alert('Erro de ligação ao servidor.');
+    } catch (err) {
+        alert('Erro de ligação ao servidor. Verifica se tens rede.');
+    }
+});
+
+const ficheiroCSV = document.getElementById('ficheiroCSV');
+if (ficheiroCSV) {
+    ficheiroCSV.addEventListener('change', () => {
+        const dropZone = document.getElementById('fileDropZone');
+        const fileLabel = document.getElementById('fileLabel');
+        if (ficheiroCSV.files.length > 0) {
+            fileLabel.textContent = ficheiroCSV.files[0].name;
+            dropZone.classList.add('has-file');
+        } else {
+            fileLabel.textContent = 'Selecionar ficheiro .csv';
+            dropZone.classList.remove('has-file');
         }
     });
-
-    const ficheiroCSV = document.getElementById('ficheiroCSV');
-    if (ficheiroCSV) {
-        ficheiroCSV.addEventListener('change', () => {
-            const dropZone = document.getElementById('fileDropZone');
-            const fileLabel = document.getElementById('fileLabel');
-            if (ficheiroCSV.files.length > 0) {
-                fileLabel.textContent = ficheiroCSV.files[0].name;
-                dropZone.classList.add('has-file');
-            } else {
-                fileLabel.textContent = 'Selecionar ficheiro .csv';
-                dropZone.classList.remove('has-file');
-            }
-        });
-    }
+}
 
     await carregarPlantas();
 
