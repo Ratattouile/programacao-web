@@ -70,6 +70,10 @@ exports.plantasImportar = async (req,res)=>{
                 return res.status(500).json({ sucesso: false, erro: "Erro ao gravar: " + err.message });
             }
     })
+    .on('error', (err) => {
+            fs.unlinkSync(req.file.path);
+            return res.status(500).json({ sucesso: false, erro: "Erro a processar o ficheiro CSV: " + err.message });
+        });
 }
 
 exports.obterPlanta = async (req, res) => {
